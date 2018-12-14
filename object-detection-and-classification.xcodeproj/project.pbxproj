@@ -23,7 +23,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0235863221C3C93600958A99 /* Object detection and classification */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Object detection and classification"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0235863221C3C93600958A99 /* object-detection-and-classification */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "object-detection-and-classification"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0235863521C3C93600958A99 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -41,7 +41,7 @@
 		0235862921C3C93600958A99 = {
 			isa = PBXGroup;
 			children = (
-				0235863421C3C93600958A99 /* Object detection and classification */,
+				0235863421C3C93600958A99 /* src */,
 				0235863321C3C93600958A99 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -49,25 +49,25 @@
 		0235863321C3C93600958A99 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				0235863221C3C93600958A99 /* Object detection and classification */,
+				0235863221C3C93600958A99 /* object-detection-and-classification */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		0235863421C3C93600958A99 /* Object detection and classification */ = {
+		0235863421C3C93600958A99 /* src */ = {
 			isa = PBXGroup;
 			children = (
 				0235863521C3C93600958A99 /* main.cpp */,
 			);
-			path = "Object detection and classification";
+			path = src;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		0235863121C3C93600958A99 /* Object detection and classification */ = {
+		0235863121C3C93600958A99 /* object-detection-and-classification */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0235863921C3C93600958A99 /* Build configuration list for PBXNativeTarget "Object detection and classification" */;
+			buildConfigurationList = 0235863921C3C93600958A99 /* Build configuration list for PBXNativeTarget "object-detection-and-classification" */;
 			buildPhases = (
 				0235862E21C3C93600958A99 /* Sources */,
 				0235862F21C3C93600958A99 /* Frameworks */,
@@ -77,9 +77,9 @@
 			);
 			dependencies = (
 			);
-			name = "Object detection and classification";
+			name = "object-detection-and-classification";
 			productName = "Object detection and classification";
-			productReference = 0235863221C3C93600958A99 /* Object detection and classification */;
+			productReference = 0235863221C3C93600958A99 /* object-detection-and-classification */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -96,7 +96,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 0235862D21C3C93600958A99 /* Build configuration list for PBXProject "Object detection and classification" */;
+			buildConfigurationList = 0235862D21C3C93600958A99 /* Build configuration list for PBXProject "object-detection-and-classification" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -108,7 +108,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				0235863121C3C93600958A99 /* Object detection and classification */,
+				0235863121C3C93600958A99 /* object-detection-and-classification */,
 			);
 		};
 /* End PBXProject section */
@@ -255,7 +255,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		0235862D21C3C93600958A99 /* Build configuration list for PBXProject "Object detection and classification" */ = {
+		0235862D21C3C93600958A99 /* Build configuration list for PBXProject "object-detection-and-classification" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0235863721C3C93600958A99 /* Debug */,
@@ -264,7 +264,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0235863921C3C93600958A99 /* Build configuration list for PBXNativeTarget "Object detection and classification" */ = {
+		0235863921C3C93600958A99 /* Build configuration list for PBXNativeTarget "object-detection-and-classification" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0235863A21C3C93600958A99 /* Debug */,
