@@ -99,3 +99,7 @@ DerivedData/
 **/xcshareddata/WorkspaceSettings.xcsettings
 
 # End of https://www.gitignore.io/api/c++,xcode,macos
+
+# Exercise 2
+data
+data/*
