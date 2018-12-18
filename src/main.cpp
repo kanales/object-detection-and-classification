@@ -17,16 +17,17 @@
 #define XD lol
 
 int main(int argc, const char * argv[]) {
-    cv::String imageName( $ROOT "data/task1/obj1000.jpg" );
-    
+    cv::String imageName( "../data/task1/obj1000.jpg" );
+
     if( argc > 1)
     {
         imageName = argv[1];
+        // string imageName = "./data/task1/obj1000.jpg";
     }
-    
+
     cv::Mat image;
     image = cv::imread(imageName, cv::IMREAD_COLOR);
-    
+
     if( image.empty() )                      // Check for invalid input
     {
         std::cout <<  "Could not open or find the image" << std::endl ;
@@ -36,8 +37,8 @@ int main(int argc, const char * argv[]) {
     cv::namedWindow( "Display window", cv::WINDOW_AUTOSIZE ); // Create a window for display.
 
     cv::imshow("Display window", image);
-    
-    cv::imwrite($ROOT "output/test.jpg", image);
+
+    cv::imwrite("./output/test.jpg", image);
     cv::waitKey(0);
     return 0;
 }
