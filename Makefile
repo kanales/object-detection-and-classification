@@ -1,11 +1,12 @@
 SRC = ./src
 OUTPUT = ./output
-CLFLAGS = -O3 -lopencv_core -lopencv_imgcodecs -lopencv_highgui
+CLFLAGS = -O3
+OPENCV = -lopencv_core -lopencv_imgcodecs -lopencv_highgui -lopencv_objdetect -lopencv_imgproc
 
 all: out
 
-out: $(SRC)/main.cpp
-	g++ $(CLFLAGS) $(SRC)/main.cpp -o $(OUTPUT)/out
+out: $(SRC)/main.cpp  $(SRC)/hog_visualization.cpp $(SRC)/hog_visualization.h
+	g++ $(CLFLAGS) $(OPENCV) $(SRC)/main.cpp $(SRC)/hog_visualization.cpp -o $(OUTPUT)/out
 
 clean:
 	rm $(OUTPUT)/*

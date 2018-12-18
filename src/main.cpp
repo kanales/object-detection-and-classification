@@ -55,7 +55,7 @@ int main(int argc, const char * argv[]) {
 
     visualizeHOG(grayImg, descriptor, hog);
 
-    cv::imwrite($ROOT "output/test.jpg", image);
+    cv::imwrite("./output/test.jpg", image);
     cv::waitKey(0);
     return 0;
 }
