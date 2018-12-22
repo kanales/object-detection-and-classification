@@ -6,19 +6,18 @@
 //  Copyright © 2018 Iván Canales Martín. All rights reserved.
 //
 #include <opencv2/opencv.hpp>
-#include <opencv2/core.hpp>
-#include <opencv2/imgcodecs.hpp>
-#include <opencv2/highgui.hpp>
-#include <opencv2/objdetect.hpp>
+// #include <opencv2/core.hpp>
+// #include <opencv2/imgcodecs.hpp>
+// #include <opencv2/highgui.hpp>
+// #include <opencv2/objdetect.hpp>
 
 #include <iostream>
-#include <string>
 
 #include "hog_visualization.h"
 #include "config.h"
 
 int main(int argc, const char * argv[]) {
-    cv::String imageName( "../data/task1/obj1000.jpg" );
+    cv::String imageName( $ROOT "/data/task1/obj1000.jpg" );
 
     if( argc > 1)
     {
@@ -37,12 +36,12 @@ int main(int argc, const char * argv[]) {
 
     //cv::namedWindow( "Display window", cv::WINDOW_AUTOSIZE ); // Create a window for display.
 
-    //cv::rotate(image, image, cv::ROTATE_90_CLOCKWISE);
+    // cv::rotate(image, image, cv::ROTATE_90_CLOCKWISE);
     cv::copyMakeBorder(image, editedImage, 3, 4, 1, 0, cv::BORDER_REFLECT);
-
+    // resize(image, editedImage, cv::Size(image.cols * 5, image.rows * 5));
     cv::imshow("Display window", editedImage);
 
-    cv::cvtColor(editedImage, grayImg, CV_RGB2GRAY);
+    cv::cvtColor(editedImage, grayImg, cv::COLOR_RGB2GRAY);
 
     // HOG descriptor
     cv::HOGDescriptor hog;
@@ -55,7 +54,10 @@ int main(int argc, const char * argv[]) {
 
     visualizeHOG(grayImg, descriptor, hog);
 
-    cv::imwrite("./output/test.jpg", image);
+    cv::imwrite( $ROOT "output/test.jpg", grayImg);
     cv::waitKey(0);
+
+    // TASK2
+
     return 0;
 }

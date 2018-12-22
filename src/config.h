@@ -9,6 +9,7 @@
 #ifndef config_h
 #define config_h
 
-#define $ROOT "/Users/kanales/Documents/Uni/TDCV/object-detection-and-classification/object-detection-and-classification/"
+// #define $ROOT "/Users/kanales/Documents/Uni/TDCV/object-detection-and-classification/object-detection-and-classification/"
+#define $ROOT "/home/ale/magistrale/tracking/object-detection-and-classification/"
 
 #endif /* config_h */

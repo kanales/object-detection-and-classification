@@ -9,6 +9,6 @@
 #ifndef hog_visualization_h
 #define hog_visualization_h
 
-void visualizeHOG(cv::Mat img, std::vector<float> &feats, cv::HOGDescriptor hog_detector, int scale_factor = 3);
+void visualizeHOG(cv::Mat img, std::vector<float> &feats, cv::HOGDescriptor &hog_detector, int scale_factor = 3);
 
 #endif /* hog_visualization_h */

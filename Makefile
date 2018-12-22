@@ -1,12 +1,13 @@
 SRC = ./src
 OUTPUT = ./output
 CLFLAGS = -O3
-OPENCV = -lopencv_core -lopencv_imgcodecs -lopencv_highgui -lopencv_objdetect -lopencv_imgproc
+CVLIBS = `pkg-config --libs opencv`
+CVFLAGS = `pkg-config --cflags opencv`
 
 all: out
 
-out: $(SRC)/main.cpp  $(SRC)/hog_visualization.cpp $(SRC)/hog_visualization.h
-	g++ $(CLFLAGS) $(OPENCV) $(SRC)/main.cpp $(SRC)/hog_visualization.cpp -o $(OUTPUT)/out
+out: $(SRC)/main.cpp  $(SRC)/*
+	g++ $(CLFLAGS) $(CVFLAGS) $(CVLIBS) $(SRC)/main.cpp $(SRC)/hog_visualization.cpp -o $(OUTPUT)/out
 
 clean:
 	rm $(OUTPUT)/*
