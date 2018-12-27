@@ -10,7 +10,7 @@ void visualizeHOG(cv::Mat img, std::vector<float> &feats, cv::HOGDescriptor hog_
 
 
 void visualizeHOG(cv::Mat img, std::vector<float> &feats, cv::HOGDescriptor hog_detector, int scale_factor) {
-
+    
     cv::Mat visual_image;
     resize(img, visual_image, cv::Size(img.cols * scale_factor, img.rows * scale_factor));
 

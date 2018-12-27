@@ -1,7 +1,8 @@
 SRC = ./src
 OUTPUT = ./output
 CLFLAGS = -O3
-OPENCV = -lopencv_core -lopencv_imgcodecs -lopencv_highgui -lopencv_objdetect -lopencv_imgproc
+OPENCV = -lopencv_core -lopencv_imgcodecs -lopencv_highgui -lopencv_objdetect -lopencv_imgproc -lopencv_ml
+
 
 all: out
 
