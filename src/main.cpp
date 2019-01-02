@@ -56,7 +56,7 @@ int main(int argc, const char * argv[]) {
     cv::String path( $ROOT "/data/task2/train/00/" );
     std::vector<std::string> v;
     std::vector<std::string> v2;
-    int nsample = 200;
+    int nsample = 100;
 
     // read_directory(path,v);
     // printvec(v);
@@ -87,11 +87,13 @@ int main(int argc, const char * argv[]) {
     int iter = 0;
     std::vector<std::string> vfinal;
     std::vector<int> trainlab;
+	// taking images name
     for (int lab = 0; lab < 6; lab++) {
       cv::String path( $ROOT "/data/task2/train/0" + std::to_string(lab) + "/");
       std::vector<std::string> v2;
       read_directory(path,v2);
       v.insert( v.end(), v2.begin(), v2.end() );
+	  // index vector
       for (size_t j = 0; j < v2.size(); j++) {
         trainlab.push_back(lab);
       }
@@ -102,6 +104,7 @@ int main(int argc, const char * argv[]) {
       vfinal.push_back(v[x]);
       trainLabel.push_back(trainlab[x]);
     }
+	// converting in Mat
     for (auto &i: vfinal){
       std::cout << i << '\n';
       cv::Mat m = cv::Mat(task1(i)).t();
@@ -109,8 +112,8 @@ int main(int argc, const char * argv[]) {
       trainData.row(iter).copyTo(m);
       iter++;
     }
-
-    cv::String path2( $ROOT "/data/task2/test/01/" );
+	// test data
+    cv::String path2( $ROOT "/data/task2/test/02/" );
     read_directory(path2,v2);
     iter = 0;
     for (auto &i: v2){
