@@ -93,10 +93,10 @@ public:
                 trainlab.push_back(lab);
             }
         }
-        std::vector<int> randid = randomvec(0, (int)v.size(), nsample);
+        std::vector<int> randid = randomvec(0, (int)v.size()-1, nsample);
         
         // rows = 100 ??? cols = 979104
-        trainData = cv::Mat((int)v.size(),979104,CV_32F);
+        
         trainLabel = cv::Mat();
         
         for (size_t i = 0; i < nsample; i++) {
@@ -104,13 +104,14 @@ public:
             vfinal.push_back(v[x]);
             trainLabel.push_back(trainlab[x]);
         }
+        trainData = cv::Mat((int)vfinal.size(),979104,CV_32F);
         // converting in Mat
         for (auto &i : vfinal) {
             std::cout << i << '\n';
             cv::Mat m = cv::Mat(task1(i)).t();
             // m.convertTo( m, CV_32F );
-//            m.copyTo(trainData.row(iter));
-            trainData.row(iter); //.copyTo(m);
+            m.copyTo(trainData.row(iter));
+//            trainData.row(iter).copyTo(m);
             
             iter++;
         }
