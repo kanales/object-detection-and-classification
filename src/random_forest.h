@@ -3,6 +3,8 @@
 
 #include "task1.h"
 
+#include <algorithm>
+
 class random_forest{
 private:
     int numTrees;
@@ -15,9 +17,48 @@ private:
     int nClasses = 6;
     cv::Mat trainData;
     cv::Mat trainLabel;
-    cv::Mat testData;
+    
+    void load_data(cv::String train_path) {
+        int iter = 0;
+        std::vector<std::string> v;
+        std::vector<std::string> vfinal;
+        std::vector<int> trainlab;
+        // taking images name
+        for (int lab = 0; lab < 6; lab++) {
+            cv::String path(train_path + std::to_string(lab) + "/");
+            std::vector<std::string> v2;
+            read_directory(path, v2);
+            v.insert(v.end(), v2.begin(), v2.end());
+            // index vector
+            for (size_t j = 0; j < v2.size(); j++) {
+                trainlab.push_back(lab);
+            }
+        }
+        std::vector<int> randid = randomvec(0, (int)v.size()-1, nsample);
+        
+        // rows = 100 ??? cols = 979104
+        
+        trainLabel = cv::Mat();
+        
+        for (size_t i = 0; i < nsample; i++) {
+            int x = randid[i];
+            vfinal.push_back(v[x]);
+            trainLabel.push_back(trainlab[x]);
+        }
+        trainData = cv::Mat((int)vfinal.size(),979104,CV_32F);
+        // converting in Mat
+        for (auto &i : vfinal) {
+            cv::Mat m = cv::Mat(task1(i)).t();
+            // m.convertTo( m, CV_32F );
+            m.copyTo(trainData.row(iter));
+            //            trainData.row(iter).copyTo(m);
+            
+            iter++;
+        }
+        
+    }
 public:
-    random_forest(int n, int samples, int f, int mc, int md, int ms){
+    random_forest(int n, int samples, int mc, int f=0, int md=10, int ms=16) {
         cv::Ptr<cv::ml::DTrees> tree;
         numTrees = n;
         for (int i = 0; i < numTrees; i++)
@@ -30,6 +71,8 @@ public:
             dtrees.push_back(tree);
         }
         nsample = samples;
+        
+//      load_data(train_path);
     }
     
     void setCVFolds(int val){
@@ -56,25 +99,7 @@ public:
         }
     }
     
-    cv::Mat create_test(cv::String test_path)
-    {
-        int iter = 0;
-        std::vector<std::string> v;
-        // test data
-        cv::String path2(test_path + "02/");
-        read_directory(path2, v);
-        testData = cv::Mat(v.size(), 800*608, CV_32F);
-        iter = 0;
-        for (auto &i : v) {
-            std::cout << i << '\n';
-            cv::Mat m = cv::Mat(task1(i)).t();
-            // m.convertTo( m, CV_32F );
-            testData.row(iter).copyTo(m);
-            iter++;
-        }
-        return testData;
-    }
-    
+    // Needs urgent optimization!!
     void create_dataset(cv::String train_path)
     {
         trainData = cv::Mat(nsample, 800*608, CV_32F);
@@ -107,7 +132,6 @@ public:
         trainData = cv::Mat((int)vfinal.size(),979104,CV_32F);
         // converting in Mat
         for (auto &i : vfinal) {
-            std::cout << i << '\n';
             cv::Mat m = cv::Mat(task1(i)).t();
             // m.convertTo( m, CV_32F );
             m.copyTo(trainData.row(iter));
@@ -127,18 +151,24 @@ public:
         }
     }
     
-    int predict(cv::Mat test_descriptor) {
+    int predict(cv::Mat sample) {
         // create_test(test_path);
-        std::vector<int> preds;
+        cv::Mat f = sample.reshape(1,1);
+        f.convertTo(f, CV_32F);
+        
+        std::vector<int> vout;
         std::vector<int> classes(nClasses);
-        for (size_t i = 0; i < numTrees; i++)
-        {
-            preds[i] = dtrees[i]->predict(test_descriptor);
-            classes[preds[i]]++;
+        // predictions contains all the predictions, for each tree(row) for each sample(col)
+        
+        std::fill(classes.begin(),classes.end(),0);
+        
+        for (int j = 0; j < numTrees; j++) {
+            int k = dtrees[j]->predict(f);
+            classes[k]++;
         }
-        int maxPred = (int)std::distance(classes.begin(), std::max_element(classes.begin(),classes.end()));
-        std::cout << maxPred << '\n';
-        return maxPred;
+        return (int)std::distance(
+                classes.begin(),
+                std::max_element(classes.begin(),classes.end()));
     }
 };
 

@@ -21,25 +21,56 @@
 #include "task1.h"
 #include "random_forest.h"
 
-int main(int argc, const char * argv[]) {
+cv::Mat create_test(cv::String test_path)
+{
+    std::vector<std::string> v;
+    // test data
+    cv::String path2(test_path + "01/");
+    read_directory(path2, v);
+    cv::Mat testData = cv::Mat((int)v.size(), 979104, CV_32F);
+    int iter = 0;
+    for (auto &i : v) {
+        cv::Mat m = cv::Mat(task1(i)).t();
+        // m.convertTo( m, CV_32F );
+        m.copyTo(testData.row(iter));
+        iter++;
+    }
+    return testData;
+}
 
+void print(const int& n) {
+    std::cout << n << " ";
+}
+
+int main(int argc, const char * argv[]) {
+    
     cv::String imageName( $ROOT "data/task1/obj1000.jpg" );
     cv::String path( $ROOT "data/task2/train/0" );
-    cv::String path2( $ROOT "data/task2/test/01/" );
-
-    int nsample = 100;
-
+    cv::String path2( $ROOT "data/task2/test/" );
+    
+    int nsample = 50;
+    
     if( argc > 1)
     {
         imageName = argv[1];
         // string imageName = "./data/task1/obj1000.jpg";
     }
-
+    
     // TASK2
-
-    random_forest rf(10,nsample,0,6,10,16);
+    
+    random_forest rf(10,nsample, 6);
+    
+    std::cout << "Training forest..." << std::endl;
     rf.train(path);
-    rf.predict(rf.create_test(path2));
+    std::cout << "Done training." << std::endl;
+    
+    std::cout << "Predicting..." << std::endl;
+    cv::Mat test  = create_test(path2);
+    
+    for (int i = 0; i < test.rows; i++) {
+        int pred = rf.predict(test);
+        std::cout << pred << std::endl;
+    }
     
     return 0;
 }
