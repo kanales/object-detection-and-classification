@@ -18,7 +18,7 @@ std::vector<int> randomvec(int range_min, int range_max, int n){
     std::mt19937 mt_eng(rd()); // mersenne-twister engine initialised with seed
     std::vector<int> v;
     // uniform distribution for generating random integers in given range
-    std::uniform_int_distribution<> dist(range_min, range_max);
+    std::uniform_int_distribution<> dist(range_min, range_max-1);
 
     for (int i = 0; i < n; ++i)
          v.push_back(dist(mt_eng));

@@ -21,11 +21,13 @@
 #include "task1.h"
 #include "random_forest.h"
 
-cv::Mat create_test(cv::String test_path)
+#define VERBOSE
+
+cv::Mat create_test(cv::String test_path, char val)
 {
     std::vector<std::string> v;
     // test data
-    cv::String path2(test_path + "01/");
+    cv::String path2(test_path + "0" + val + "/");
     read_directory(path2, v);
     cv::Mat testData = cv::Mat((int)v.size(), 979104, CV_32F);
     int iter = 0;
@@ -43,34 +45,45 @@ void print(const int& n) {
 }
 
 int main(int argc, const char * argv[]) {
-    
+
     cv::String imageName( $ROOT "data/task1/obj1000.jpg" );
     cv::String path( $ROOT "data/task2/train/0" );
     cv::String path2( $ROOT "data/task2/test/" );
-    
-    int nsample = 50;
-    
+
+    int ntrees  = 20;
+    int nsample = 150;
+
     if( argc > 1)
     {
         imageName = argv[1];
         // string imageName = "./data/task1/obj1000.jpg";
     }
-    
+
     // TASK2
-    
-    random_forest rf(10,nsample, 6);
-    
+
+    random_forest rf(ntrees,nsample, 6);
+
     std::cout << "Training forest..." << std::endl;
     rf.train(path);
     std::cout << "Done training." << std::endl;
-    
+
     std::cout << "Predicting..." << std::endl;
-    cv::Mat test  = create_test(path2);
+    cv::Mat test;
+
+    char values[6] = {'0','1','2','3','4','5'};
     
-    for (int i = 0; i < test.rows; i++) {
-        int pred = rf.predict(test);
-        std::cout << pred << std::endl;
+    for (int j=0; j < 6; j++) {
+        std::cout << "Expected: " << values[j] << ": ";
+        test = create_test(path2, values[j]);
+        for (int i = 0; i < test.rows; i++) {
+            int pred = rf.predict(test);
+            std::cout << pred << ' ';
+        }
+        std::cout << std::endl;
     }
+    
+
+    
     
     return 0;
 }

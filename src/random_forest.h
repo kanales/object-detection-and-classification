@@ -1,6 +1,10 @@
 #ifndef RANDOM_FOREST_H
 #define RANDOM_FOREST_H
 
+#ifdef VERBOSE
+#include <stdio>
+#endif
+
 #include "task1.h"
 
 #include <algorithm>
@@ -15,8 +19,6 @@ private:
     int minSampleCount;
     int nsample;
     int nClasses = 6;
-    cv::Mat trainData;
-    cv::Mat trainLabel;
     
     void load_data(cv::String train_path) {
         int iter = 0;
@@ -38,14 +40,14 @@ private:
         
         // rows = 100 ??? cols = 979104
         
-        trainLabel = cv::Mat();
+        cv::Mat trainLabel;
         
         for (size_t i = 0; i < nsample; i++) {
             int x = randid[i];
             vfinal.push_back(v[x]);
             trainLabel.push_back(trainlab[x]);
         }
-        trainData = cv::Mat((int)vfinal.size(),979104,CV_32F);
+        cv::Mat trainData((int)vfinal.size(),979104,CV_32F);
         // converting in Mat
         for (auto &i : vfinal) {
             cv::Mat m = cv::Mat(task1(i)).t();
@@ -100,13 +102,15 @@ public:
     }
     
     // Needs urgent optimization!!
-    void create_dataset(cv::String train_path)
+    void load_dataset(cv::String train_path)
     {
-        trainData = cv::Mat(nsample, 800*608, CV_32F);
-        int iter = 0;
+    }
+    
+    // putting the right training data and the train path can be chosen before (we use it multiple times) (we have to do it differently)
+    void train(cv::String train_path){
+        // LOAD DATASET
         std::vector<std::string> v;
-        std::vector<std::string> vfinal;
-        std::vector<int> trainlab;
+        cv::Mat trainLabel;
         // taking images name
         for (int lab = 0; lab < 6; lab++) {
             cv::String path(train_path + std::to_string(lab) + "/");
@@ -115,39 +119,36 @@ public:
             v.insert(v.end(), v2.begin(), v2.end());
             // index vector
             for (size_t j = 0; j < v2.size(); j++) {
-                trainlab.push_back(lab);
+                trainLabel.push_back(lab);
             }
         }
-        std::vector<int> randid = randomvec(0, (int)v.size()-1, nsample);
-        
-        // rows = 100 ??? cols = 979104
-        
-        trainLabel = cv::Mat();
-        
-        for (size_t i = 0; i < nsample; i++) {
-            int x = randid[i];
-            vfinal.push_back(v[x]);
-            trainLabel.push_back(trainlab[x]);
-        }
-        trainData = cv::Mat((int)vfinal.size(),979104,CV_32F);
+        cv::Mat trainData((int)v.size(),979104,CV_32F);
         // converting in Mat
-        for (auto &i : vfinal) {
+        int iter = 0;
+        for (auto &i : v) {
             cv::Mat m = cv::Mat(task1(i)).t();
             // m.convertTo( m, CV_32F );
             m.copyTo(trainData.row(iter));
-//            trainData.row(iter).copyTo(m);
+            //            trainData.row(iter).copyTo(m);
             
             iter++;
         }
         
-    }
-    
-    // putting the right training data and the train path can be chosen before (we use it multiple times) (we have to do it differently)
-    void train(cv::String train_path){
+        cv::Mat sampleFeatures(nsample, trainData.cols, trainData.type());
+        cv::Mat sampleLabels(nsample, 1, CV_32S);
+        std::vector<int> vec(nsample);
         for (size_t i = 0; i < numTrees; i++)
         {
-            create_dataset(train_path);
-            dtrees[i]->train(cv::ml::TrainData::create(trainData, cv::ml::ROW_SAMPLE, trainLabel));
+            std::cout << i+1 << '/' << numTrees << std::endl;
+            
+            // Sampling
+            vec =  randomvec(0,trainData.rows, nsample);
+            for (int j,k = 0; k < nsample; k++) {
+                j = vec[k];
+                trainData.row(j).copyTo(sampleFeatures.row(k));
+                (*sampleLabels.ptr<int>(k)) = (*trainLabel.ptr<int>(j));
+            }
+            dtrees[i]->train(cv::ml::TrainData::create(sampleFeatures, cv::ml::ROW_SAMPLE, sampleLabels));
         }
     }
     
