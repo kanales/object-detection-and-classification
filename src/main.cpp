@@ -23,9 +23,9 @@
 
 int main(int argc, const char * argv[]) {
 
-    cv::String imageName( $ROOT "/data/task1/obj1000.jpg" );
-    cv::String path( $ROOT "/data/task2/train/0" );
-    cv::String path2( $ROOT "/data/task2/test/01/" );
+    cv::String imageName( $ROOT "data/task1/obj1000.jpg" );
+    cv::String path( $ROOT "data/task2/train/0" );
+    cv::String path2( $ROOT "data/task2/test/01/" );
 
     int nsample = 100;
 
@@ -38,9 +38,8 @@ int main(int argc, const char * argv[]) {
     // TASK2
 
     random_forest rf(10,nsample,0,6,10,16);
-    // rf.train(path);
-    // rf.predict(rf.create_test(path2));
-
-
+    rf.train(path);
+    rf.predict(rf.create_test(path2));
+    
     return 0;
 }

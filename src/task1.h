@@ -2,6 +2,9 @@
 
 #include "config.h"
 
+#ifndef TASK1_H
+#define TASK1_H
+
 #define CELL_SIZE 16
 #define NBINS 8
 
@@ -39,3 +42,5 @@ std::vector<float> task1(cv::String imageName){
   }
   return descriptor;
 }
+
+#endif
