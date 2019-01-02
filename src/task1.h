@@ -2,6 +2,9 @@
 
 #include "config.h"
 
+#define CELL_SIZE 16
+#define NBINS 8
+
 std::vector<float> task1(cv::String imageName){
   cv::Mat image, editedImage, grayImg;
   std::vector<float> descriptor;
@@ -12,22 +15,17 @@ std::vector<float> task1(cv::String imageName){
       std::cout <<  "Could not open or find the image " << imageName << std::endl ;
   }
   else{
-    //cv::namedWindow( "Display window", cv::WINDOW_AUTOSIZE ); // Create a window for display.
 
-    // cv::rotate(image, image, cv::ROTATE_90_CLOCKWISE);
     cv::copyMakeBorder(image, editedImage, 3, 4, 1, 0, cv::BORDER_REFLECT);
-    // std::cout << cv::Size(image.cols * 5, image.rows * 5) << '\n';
-    // return descriptor;
-    resize(image, editedImage, cv::Size(800,600));
-    // cv::imshow("Display window", editedImage);
-    //
+    cv::resize(image, editedImage, cv::Size(800,608)); // Check later if it's correct!
     cv::cvtColor(editedImage, grayImg, cv::COLOR_RGB2GRAY);
 
     // HOG descriptor
-    cv::HOGDescriptor hog(cv::Size(64, 128), cv::Size(16, 16), cv::Size(8, 8), cv::Size(8, 8), 9);
-    // hog.winSize = grayImg.size();
-    //    std::vector<cv::Point> positions;
-    //    positions.push_back(cv::Point(grayImg.cols / 2, grayImg.rows / 2));
+    cv::HOGDescriptor hog;
+    hog.blockSize = cv::Size(2*CELL_SIZE,2*CELL_SIZE);
+    hog.blockStride = cv::Size(CELL_SIZE,CELL_SIZE);
+    hog.cellSize = cv::Size(CELL_SIZE,CELL_SIZE);
+    hog.nbins = NBINS;
 
     hog.compute(grayImg,descriptor);
   }
