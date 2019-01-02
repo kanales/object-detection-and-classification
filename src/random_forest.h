@@ -1,9 +1,7 @@
-#include <opencv2/ml.hpp>
-
 class random_forest{
 private:
-  std::vector<cv::ml::DTrees> dtree;
   int numTrees;
+  std::vector<cv::Ptr<cv::ml::DTrees>> dtrees;
   int folds;
   int maxCategories;
   int maxDepth;
@@ -15,43 +13,51 @@ private:
   cv::Mat testData;
 public:
   random_forest(int n, int samples, int f, int mc, int md, int ms){
-    dtree(n);
-	for (int i = 0; i < n; i++)
-	{
-		dtree[i]->(cv::ml::DTrees::create());
-    dtree[i]->setCVFolds(f /*10*/); // nonzero causes core dump
-    dtree[i]->setMaxCategories(mc);
-    dtree[i]->setMaxDepth(md);
-    dtree[i]->setMinSampleCount(ms);
-  }
-  numTrees = n;
-  nsample = samples;
+    numTrees = n;
+    dtrees.reserve(numTrees);
+    for (int i = 0; i < numTrees; i++)
+  	{
+  		dtrees[i]->cv::ml::DTrees::create();
+      dtrees[i]->setCVFolds(f /*10*/);
+      dtrees[i]->setMaxCategories(mc);
+      dtrees[i]->setMaxDepth(md);
+      dtrees[i]->setMinSampleCount(ms);
+    }
+    nsample = samples;
   }
 
   void setCVFolds(int val){
-    dtree->setCVFolds(val /*10*/); // nonzero causes core dump
+    for (size_t i = 0; i < numTrees; i++) {
+      dtrees[i]->setCVFolds(val /*10*/); // nonzero causes core dump
+    }
   }
 
   void setMaxCategories(int val){
-    dtree->setMaxCategories(val);
+    for (size_t i = 0; i < numTrees; i++) {
+      dtrees[i]->setMaxCategories(val);
+    }
   }
 
   void setMaxDepth(int val){
-    dtree->setMaxDepth(val);
+    for (size_t i = 0; i < numTrees; i++) {
+      dtrees[i]->setMaxDepth(val );
+    }
   }
 
   void setSampleCount(int val){
-    dtree->setMinSampleCount(val);
+    for (size_t i = 0; i < numTrees; i++) {
+      dtrees[i]->setMinSampleCount(val );
+    }
   }
 
-  void create_test(std::vector<std::string> test_path)
+  cv::Mat create_test(cv::String test_path)
   {
     int iter = 0;
     std::vector<std::string> v;
 	  // test data
-	  cv::String path2(testpath + "/02/");
+	  cv::String path2(test_path + "/02/");
 	  read_directory(path2, v);
-	  testData = (v.size(), 800*600, CV_32F);
+	  testData = (v.size(), 800*608, CV_32F);
 	  iter = 0;
 	  for (auto &i : v) {
 		  std::cout << i << '\n';
@@ -60,11 +66,12 @@ public:
 		  testData.row(iter).copyTo(m);
 		  iter++;
 	  }
+    return testData;
   }
 
-  void create_dataset(std::vector<std::string> train_path)
+  void create_dataset(cv::String train_path)
   {
-	  trainData = (nsample, 800*600, CV_32F);
+	  trainData = (nsample, 800*608, CV_32F);
 	  int iter = 0;
     std::vector<std::string> v;
 	  std::vector<std::string> vfinal;
@@ -98,25 +105,25 @@ public:
   }
 
   // putting the right training data and the train path can be choose before (we use it multiple times) (we have to do it differently)
-  void train(std::vector<std::string> train_path){
+  void train(cv::String train_path){
   	for (size_t i = 0; i < numTrees; i++)
   	{
   		create_dataset(train_path);
-  		dtree[i]->train(cv::ml::TrainData::create(trainData, cv::ml::ROW_SAMPLE, trainLabel));
+  		dtrees[i]->train(cv::ml::TrainData::create(trainData, cv::ml::ROW_SAMPLE, trainLabel));
   	}
   }
 
   int predict(cv::Mat test_descriptor) {
 	  // create_test(test_path);
-	  std::vector<int> preds;
-	  std::vector<int> classes[nClasses];
+    std::vector<int> preds;
+	  std::vector<int> classes(nClasses);
 	  for (size_t i = 0; i < numTrees; i++)
 	  {
-		  preds[i] = dtree[i]->predict(test_descriptor);
-		  nClasses[preds[i]]++;
+		  preds[i] = dtrees[i]->predict(test_descriptor);
+		  classes[preds[i]]++;
 	  }
-	  int maxPred = std::max_element(nClasses);
-      std::cout << maxPred << '\n';
+	  int maxPred = std::distance(classes.begin(),std::max_element(classes.begin(),classes.end()));
+    std::cout << maxPred << '\n';
 	  return maxPred;
   }
-}
+};

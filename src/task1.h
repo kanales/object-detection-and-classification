@@ -28,6 +28,14 @@ std::vector<float> task1(cv::String imageName){
     hog.nbins = NBINS;
 
     hog.compute(grayImg,descriptor);
+
+    // for task 1 execute this
+    
+    // descriptor = task1(imageName);
+    // visualizeHOG(grayImg, descriptor, hog);
+    // cv::imwrite( $ROOT "output/test.jpg", grayImg);
+    // cv::waitKey(0);
+
   }
   return descriptor;
 }
