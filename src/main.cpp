@@ -14,41 +14,12 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <filesystem>
 
 #include "hog_visualization.h"
 #include "config.h"
 #include "utils.h"
-
-std::vector<float> task1(cv::String imageName){
-  cv::Mat image, editedImage, grayImg;
-  std::vector<float> descriptor;
-  image = cv::imread(imageName, cv::IMREAD_COLOR);
-
-  if( image.empty() )                      // Check for invalid input
-  {
-      std::cout <<  "Could not open or find the image " << imageName << std::endl ;
-  }
-  else{
-    //cv::namedWindow( "Display window", cv::WINDOW_AUTOSIZE ); // Create a window for display.
-
-    // cv::rotate(image, image, cv::ROTATE_90_CLOCKWISE);
-    cv::copyMakeBorder(image, editedImage, 3, 4, 1, 0, cv::BORDER_REFLECT);
-    resize(image, editedImage, cv::Size(image.cols * 5, image.rows * 5));
-    // cv::imshow("Display window", editedImage);
-    //
-    cv::cvtColor(editedImage, grayImg, cv::COLOR_RGB2GRAY);
-
-    // HOG descriptor
-    cv::HOGDescriptor hog;
-    // hog.winSize = grayImg.size();
-    //    std::vector<cv::Point> positions;
-    //    positions.push_back(cv::Point(grayImg.cols / 2, grayImg.rows / 2));
-
-    hog.compute(grayImg,descriptor);
-  }
-  return descriptor;
-}
+#include "task1.h"
+#include "random_forest.h"
 
 int main(int argc, const char * argv[]) {
 
@@ -77,10 +48,11 @@ int main(int argc, const char * argv[]) {
     // cv::waitKey(0);
 
     // TASK2
-    std::vector<float> descriptor = task1("/home/ale/magistrale/tracking/object-detection-and-classification/data/task2/train/00/0017.jpg");
+    std::vector<float> descriptor = task1("/home/ale/magistrale/tracking/object-detection-and-classification/data/task2/train/00/0011.jpg");
 
     // /home/ale/magistrale/tracking/object-detection-and-classification/data/task2/train/00/0017.jpg
-
+    std::cout << descriptor.size() << '\n';
+    return 0;
     cv::Mat trainData(nsample,descriptor.size(), CV_32F);
     cv::Mat trainLabel;
     cv::Mat testData(nsample,descriptor.size(), CV_32F);
@@ -123,17 +95,20 @@ int main(int argc, const char * argv[]) {
       testData.row(iter).copyTo(m);
       iter++;
     }
+    //
+    // cv::Ptr<cv::ml::DTrees> dtree = cv::ml::DTrees::create();
+    //
+    // dtree->setMaxDepth(16);
+    // dtree->setMinSampleCount(10);
+    // dtree->setMaxCategories(6);
+    // dtree->setCVFolds(0 /*10*/); // nonzero causes core dump
+    // // printmat(trainData);
+    // dtree->train(cv::ml::TrainData::create(trainData, cv::ml::ROW_SAMPLE, trainLabel));
+    //
+    // std::cout << dtree->predict(testData) << '\n';
 
-    cv::Ptr<cv::ml::DTrees> dtree = cv::ml::DTrees::create();
+    // random_forest rf;
 
-    dtree->setMaxDepth(16);
-    dtree->setMinSampleCount(10);
-    dtree->setMaxCategories(6);
-    dtree->setCVFolds(0 /*10*/); // nonzero causes core dump
-    // printmat(trainData);
-    dtree->train(cv::ml::TrainData::create(trainData, cv::ml::ROW_SAMPLE, trainLabel));
-
-    std::cout << dtree->predict(testData) << '\n';
 
     return 0;
 }

@@ -2,7 +2,7 @@
 
 class random_forest{
 private:
-  std::vector<cv::DTrees> dtrees;
+  std::vector<cv::ml::DTrees> dtree;
   int numTrees;
   int folds;
   int maxCategories;
@@ -15,42 +15,45 @@ private:
   cv::Mat testData;
 public:
   random_forest(int n, int samples, int f, int mc, int md, int ms){
+    dtree(n);
 	for (int i = 0; i < n; i++)
 	{
-		dtrees.push_back(cv::ml::DTrees::create());
-	}
-	numTrees = n;
-	nsample = samples;
-    dtree->setCVFolds(f /*10*/); // nonzero causes core dump
-    dtree->setMaxCategories(mc);
-    dtree->setMaxDepth(md);
-    dtree->setMinSampleCount(ms);
+		dtree[i]->(cv::ml::DTrees::create());
+    dtree[i]->setCVFolds(f /*10*/); // nonzero causes core dump
+    dtree[i]->setMaxCategories(mc);
+    dtree[i]->setMaxDepth(md);
+    dtree[i]->setMinSampleCount(ms);
+  }
+  numTrees = n;
+  nsample = samples;
   }
 
   void setCVFolds(int val){
-    dtree->setCVFolds(f /*10*/); // nonzero causes core dump
+    dtree->setCVFolds(val /*10*/); // nonzero causes core dump
   }
 
   void setMaxCategories(int val){
-    dtree->setMaxCategories(mc);
+    dtree->setMaxCategories(val);
   }
 
   void setMaxDepth(int val){
-    dtree->setMaxDepth(md);
+    dtree->setMaxDepth(val);
   }
 
   void setSampleCount(int val){
-    dtree->setMinSampleCount(ms);
+    dtree->setMinSampleCount(val);
   }
 
   void create_test(std::vector<std::string> test_path)
   {
+    int iter = 0;
+    std::vector<std::string> v;
 	  // test data
 	  cv::String path2(testpath + "/02/");
-	  read_directory(path2, v2);
-	  testData = (v2.size(), !!!DESRIPTOR_SIZE, CV_32F) // DESCRIPTOR SIZE (10...)
+	  read_directory(path2, v);
+	  testData = (v.size(), 800*600, CV_32F);
 	  iter = 0;
-	  for (auto &i : v2) {
+	  for (auto &i : v) {
 		  std::cout << i << '\n';
 		  cv::Mat m = cv::Mat(task1(i)).t();
 		  // m.convertTo( m, CV_32F );
@@ -61,8 +64,9 @@ public:
 
   void create_dataset(std::vector<std::string> train_path)
   {
-	  trainData = (nsample, !!!DESRIPTOR_SIZE, CV_32F) // DESCRIPTOR SIZE (10...)
+	  trainData = (nsample, 800*600, CV_32F);
 	  int iter = 0;
+    std::vector<std::string> v;
 	  std::vector<std::string> vfinal;
 	  std::vector<int> trainlab;
 	  // taking images name
@@ -90,16 +94,16 @@ public:
 		  trainData.row(iter).copyTo(m);
 		  iter++;
 	  }
-	 
+
   }
 
   // putting the right training data and the train path can be choose before (we use it multiple times) (we have to do it differently)
   void train(std::vector<std::string> train_path){
-	for (size_t i = 0; i < numTrees; i++)
-	{
-		create_dataset(train_path);
-		dtree[i]->train(cv::ml::TrainData::create(trainData, cv::ml::ROW_SAMPLE, trainLabel));
-	}
+  	for (size_t i = 0; i < numTrees; i++)
+  	{
+  		create_dataset(train_path);
+  		dtree[i]->train(cv::ml::TrainData::create(trainData, cv::ml::ROW_SAMPLE, trainLabel));
+  	}
   }
 
   int predict(cv::Mat test_descriptor) {
