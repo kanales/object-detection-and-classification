@@ -31,7 +31,6 @@ void show_descriptor(cv::HOGDescriptor hog, cv::String imageName) {
         std::cout <<  "Could not open or find the image " << imageName << std::endl ;
     }
     else {
-        cv::copyMakeBorder(image, editedImage, 3, 4, 1, 0, cv::BORDER_REFLECT);
         cv::resize(image, editedImage, cv::Size(WIN_SIZE,WIN_SIZE)); // Check later if it's correct!
         
         cv::cvtColor(editedImage, grayImg, cv::COLOR_RGB2GRAY);
@@ -45,7 +44,6 @@ void show_descriptor(cv::HOGDescriptor hog, cv::String imageName) {
     }
 }
 
-
 std::vector<float> extract_descriptor(cv::HOGDescriptor hog, cv::String imageName) {
     cv::Mat image, editedImage, grayImg;
     std::vector<float> descriptor;
@@ -56,13 +54,10 @@ std::vector<float> extract_descriptor(cv::HOGDescriptor hog, cv::String imageNam
         std::cout <<  "Could not open or find the image " << imageName << std::endl ;
     }
     else{
-        
-        //cv::copyMakeBorder(image, editedImage, 3, 4, 1, 0, cv::BORDER_REFLECT);
         cv::resize(image, editedImage, cv::Size(128,128)); // Check later if it's correct!
         cv::cvtColor(editedImage, grayImg, cv::COLOR_RGB2GRAY);
         
         hog.compute(grayImg,descriptor);
-        
     }
     return descriptor;
 }

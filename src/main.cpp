@@ -42,10 +42,11 @@ cv::Mat create_test(cv::HOGDescriptor hog, cv::String test_path, char val)
 
 template <class T>
 void print_vector(std::vector<T> v) {
+    std::cout << '[';
     for (T x: v) {
-        std::cout << x << ' ';
+        std::cout << ' ' << x;
     }
-    std::cout << std::endl;
+    std::cout << " ]";
 }
 
 int main(int argc, const char * argv[]) {
@@ -80,10 +81,9 @@ int main(int argc, const char * argv[]) {
         test = create_test(hog, path2, values[j]);
         for (int i = 0; i < test.rows; i++) {
             std::vector<float> pred = rf.predict(test);
-            for (int k = 0; k < 6; k++) {
-                std::cout << pred[k] << ' ';
-            }
-
+            int k = (int)std::distance(pred.begin(), std::max_element(pred.begin(), pred.end()));
+            std::cout << "\tP: " << k << ' ';
+            print_vector(pred);
             std::cout << std::endl;
         }
         std::cout << std::endl;
