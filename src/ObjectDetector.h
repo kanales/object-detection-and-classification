@@ -52,9 +52,10 @@ std::vector<cv::Rect> ObjectDetector::generateWindows(cv::Mat image) {
 }
 
 Class ObjectDetector::detectClass(cv::Rect rect, cv::Mat img) {
-    //TODO
+    //TODO test this
     cv::Mat subimg = img(rect);
-    return 0;
+    std::vector<float> preds = rf.predictImage(subimg);
+    return (int) std::distance(preds.begin(), std::max_element(preds.begin(),preds.end()));
 }
 
 std::vector<DetectedObject> ObjectDetector::detectObjects(cv::Mat image) {
@@ -78,10 +79,6 @@ std::vector<DetectedObject> ObjectDetector::detectObjects(cv::Mat image) {
 
 std::vector<DetectedObject> ObjectDetector::nonMaximaSupression(std::vector<DetectedObject> objs) {
     return objs;
-}
-
-Class ObjectDetector::predictPatch(cv::Mat patch) {
-    return 0;
 }
 
 #endif /* ObjectDetector_h */

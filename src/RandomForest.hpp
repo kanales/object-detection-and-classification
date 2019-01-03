@@ -21,7 +21,7 @@ private:
     // used for predicting from a list of images
     cv::Mat imageToSample(cv::Mat images);
 public:
-    RandomForest(int n, int samples, cv::HOGDescriptor hog, int mc, int f=0, int md=10, int ms=16);
+    RandomForest(int n, int samples, cv::HOGDescriptor hog, int mc, int f=0, int md=10, int ms=10);
     
     void setCVFolds(int val);
     
@@ -89,7 +89,7 @@ void RandomForest::setSampleCount(int val){
     }
 }
 
-// putting the right training data and the train path can be chosen before (we use it multiple times) (we have to do it differently)
+// this shouldn't have to load the dataset
 void RandomForest::train(cv::String train_path){
     // LOAD DATASET
     std::vector<std::string> v;
@@ -116,18 +116,19 @@ void RandomForest::train(cv::String train_path){
         
         iter++;
     }
-    
+    int n = nsample;
+    if (nsample == -1) n = trainData.rows;
     // Create samples
-    cv::Mat sampleFeatures(nsample, trainData.cols, trainData.type());
-    cv::Mat sampleLabels(nsample, 1, CV_32S);
-    std::vector<int> vec(nsample);
+    cv::Mat sampleFeatures(n, trainData.cols, trainData.type());
+    cv::Mat sampleLabels(n, 1, CV_32S);
+    std::vector<int> vec(n);
     for (size_t i = 0; i < numTrees; i++)
     {
         std::cout << i+1 << '/' << numTrees << std::endl;
         
         // Sampling
-        vec =  randomvec(0,trainData.rows, nsample);
-        for (int j,k = 0; k < nsample; k++) {
+        vec =  randomvec(0,trainData.rows, n);
+        for (int j,k = 0; k < n; k++) {
             j = vec[k];
             trainData.row(j).copyTo(sampleFeatures.row(k));
             (*sampleLabels.ptr<int>(k)) = (*trainLabel.ptr<int>(j));
@@ -137,9 +138,9 @@ void RandomForest::train(cv::String train_path){
     }
 }
 
-std::vector<float> RandomForest::predict(cv::Mat sample) {
+std::vector<float> RandomForest::predict(cv::Mat descriptor) {
     // create_test(test_path);
-    cv::Mat f = sample.reshape(1,1);
+    cv::Mat f = descriptor.reshape(1,1);
     f.convertTo(f, CV_32F);
     
     std::vector<int> vout;
@@ -147,11 +148,11 @@ std::vector<float> RandomForest::predict(cv::Mat sample) {
     // predictions contains all the predictions, for each tree(row) for each sample(col)
     
     std::fill(classes.begin(),classes.end(),0);
-    
-    for (int j = 0; j < numTrees; j++) {
-        int k = dtrees[j]->predict(f);
-        classes[k]++;
+
+    for (auto tree: dtrees) {
+        classes[tree->predict(f)]++;
     }
+
     std::vector<float> out(nClasses);
     float sum = 0;
     for (auto& n : classes) {
@@ -163,9 +164,6 @@ std::vector<float> RandomForest::predict(cv::Mat sample) {
     }
     
     return out;
-    //        return (int)std::distance(
-    //                classes.begin(),
-    //                std::max_element(classes.begin(),classes.end()));
 }
 
 cv::Mat RandomForest::imageToSample(cv::Mat images) {

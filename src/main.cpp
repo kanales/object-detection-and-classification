@@ -32,20 +32,10 @@ std::vector<cv::Mat> load_test(cv::String test_path, char val) {
         out[idx++] = cv::imread(s, cv::IMREAD_COLOR);
     }
     return out;
+}
 
-//    std::vector<std::string> v;
-//    // test data
-//    cv::String path2(test_path + "0" + val + "/");
-//    read_directory(path2, v);
-//    cv::Mat testData = cv::Mat((int)v.size(), (int)hog.getDescriptorSize(), CV_32F);
-//    int iter = 0;
-//    for (auto &i : v) {
-//        cv::Mat m = cv::Mat(extract_descriptor(hog,i)).t();
-//        // m.convertTo( m, CV_32F );
-//        m.copyTo(testData.row(iter));
-//        iter++;
-//    }
-//    return testData;
+std::vector<cv::Mat> load_dataset(cv::String dataset_path) {
+
 }
 
 template <class T>
@@ -58,13 +48,12 @@ void print_vector(std::vector<T> v) {
 }
 
 void part2(int argc, const char *argv[]) {
-
     cv::String imageName( $ROOT "data/task1/obj1000.jpg" );
     cv::String path( $ROOT "data/task2/train/0" );
     cv::String path2( $ROOT "data/task2/test/" );
 
-    int ntrees  = 30;
-    int nsample = 150;
+    int ntrees  = 20;
+    int nsample = -1;
 
     if(argc > 1)
     {
@@ -95,11 +84,6 @@ void part2(int argc, const char *argv[]) {
         }
     }
 }
-
-struct S {
-    int a;
-    int b;
-};
 
 int main(int argc, const char * argv[]) {
     part2(argc, argv);
