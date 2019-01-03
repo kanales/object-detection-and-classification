@@ -19,29 +19,40 @@
 #include "utils.h"
 #include "task1.h"
 #include "RandomForest.hpp"
+#include "ObjectDetector.h"
 
-cv::Mat create_test(cv::HOGDescriptor hog, cv::String test_path, char val)
-{
+std::vector<cv::Mat> load_test(cv::String test_path, char val) {
+    cv::Mat image;
     std::vector<std::string> v;
-    // test data
     cv::String path2(test_path + "0" + val + "/");
     read_directory(path2, v);
-    cv::Mat testData = cv::Mat((int)v.size(), (int)hog.getDescriptorSize(), CV_32F);
-    int iter = 0;
-    for (auto &i : v) {
-        cv::Mat m = cv::Mat(extract_descriptor(hog,i)).t();
-        // m.convertTo( m, CV_32F );
-        m.copyTo(testData.row(iter));
-        iter++;
+    std::vector<cv::Mat> out(v.size());
+    int idx = 0;
+    for (auto &s: v) {
+        out[idx++] = cv::imread(s, cv::IMREAD_COLOR);
     }
-    return testData;
+    return out;
+
+//    std::vector<std::string> v;
+//    // test data
+//    cv::String path2(test_path + "0" + val + "/");
+//    read_directory(path2, v);
+//    cv::Mat testData = cv::Mat((int)v.size(), (int)hog.getDescriptorSize(), CV_32F);
+//    int iter = 0;
+//    for (auto &i : v) {
+//        cv::Mat m = cv::Mat(extract_descriptor(hog,i)).t();
+//        // m.convertTo( m, CV_32F );
+//        m.copyTo(testData.row(iter));
+//        iter++;
+//    }
+//    return testData;
 }
 
 template <class T>
 void print_vector(std::vector<T> v) {
     std::cout << '[';
     for (T x: v) {
-        std::cout << ' ' << x;
+        std::cout << '\t' << x;
     }
     std::cout << " ]";
 }
@@ -52,8 +63,8 @@ void part2(int argc, const char *argv[]) {
     cv::String path( $ROOT "data/task2/train/0" );
     cv::String path2( $ROOT "data/task2/test/" );
 
-    int ntrees  = 25;
-    int nsample = 200;
+    int ntrees  = 30;
+    int nsample = 150;
 
     if(argc > 1)
     {
@@ -69,21 +80,19 @@ void part2(int argc, const char *argv[]) {
     std::cout << "Done training." << std::endl;
 
     std::cout << "Predicting..." << std::endl;
-    cv::Mat test;
 
     char values[6] = {'0','1','2','3','4','5'};
 
-    for (int j=0; j < 6; j++) {
+    for (Class j = 0; j < 6; j++) {
         std::cout << "Expected: " << values[j] << ": " << std::endl;
-        test = create_test(hog, path2, values[j]);
-        for (int i = 0; i < test.rows; i++) {
-            std::vector<float> pred = rf.predict(test);
+        std::vector<cv::Mat> images = load_test(path2, values[j]);
+        for (auto img: images) {
+            std::vector<float> pred = rf.predictImage(img);
             int k = (int)std::distance(pred.begin(), std::max_element(pred.begin(), pred.end()));
             std::cout << "\tP: " << k << ' ';
             print_vector(pred);
             std::cout << std::endl;
         }
-        std::cout << std::endl;
     }
 }
 
@@ -93,16 +102,21 @@ struct S {
 };
 
 int main(int argc, const char * argv[]) {
-    //part2(argc, argv);
-    std::vector<S> vec;
-
-    for (int i = 0; i < 10; i++) {
-        S s {i , -i};
-        vec.push_back(s);
-    }
-
-    for (S x: vec) {
-        std::cout << x.a << ' ' << x.b << std::endl;
-    }
-    return 0;
+    part2(argc, argv);
+//    cv::String imageName( $ROOT "data/task1/obj1000.jpg" );
+//    cv::String path( $ROOT "data/task2/train/0" );
+//    cv::String path2( $ROOT "data/task2/test/" );
+//
+//    int ntrees  = 25;
+//    int nsample = 200;
+//    Class bgClass = 0; // placeholder
+//
+//    cv::HOGDescriptor hog = mk_hog();
+//    RandomForest rf(ntrees,nsample, hog, 6);
+//    rf.train(path);
+//    std::cout << "Done training." << std::endl;
+//
+//    ObjectDetector obd(rf, bgClass, 0);
+//
+//    obd.
 }

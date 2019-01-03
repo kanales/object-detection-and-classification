@@ -17,6 +17,9 @@ private:
     int nsample;
     int nClasses = 6;
     cv::HOGDescriptor hog;
+
+    // used for predicting from a list of images
+    cv::Mat imageToSample(cv::Mat images);
 public:
     RandomForest(int n, int samples, cv::HOGDescriptor hog, int mc, int f=0, int md=10, int ms=16);
     
@@ -31,6 +34,8 @@ public:
     // putting the right training data and the train path can be chosen before (we use it multiple times) (we have to do it differently)
     void train(cv::String train_path);
     std::vector<float> predict(cv::Mat sample);
+    std::vector<float> predictImage(cv::Mat images);
+
 };
 
 //
@@ -161,6 +166,20 @@ std::vector<float> RandomForest::predict(cv::Mat sample) {
     //        return (int)std::distance(
     //                classes.begin(),
     //                std::max_element(classes.begin(),classes.end()));
+}
+
+cv::Mat RandomForest::imageToSample(cv::Mat images) {
+    cv::Mat editedImage, grayImage, m;
+    std::vector<float> descriptor;
+
+    cv::resize(images, editedImage, cv::Size(128,128));
+    cv::cvtColor(editedImage, grayImage, cv::COLOR_RGB2GRAY);
+    hog.compute(grayImage,descriptor);
+    return cv::Mat(descriptor);
+}
+
+std::vector<float> RandomForest::predictImage(cv::Mat images) {
+    return predict(imageToSample(images));
 }
 
 
