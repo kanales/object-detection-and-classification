@@ -11,12 +11,10 @@ add_executable(object_detection_and_classification
         src/hog_visualization.cpp
         src/hog_visualization.h
         src/main.cpp
-        src/ObjectDetector.h
-        src/progress.h
         src/RandomForest.cpp
         src/RandomForest.hpp
         src/task1.h
-        src/utils.h)
+        src/utils.h src/ObjectDetector.cpp src/ObjectDetector.h src/task1.cpp src/utils.cpp)
 
 include_directories(${OpenCV_INCLUDE_DIRS})
 target_link_libraries(object_detection_and_classification ${OpenCV_LIBS} )

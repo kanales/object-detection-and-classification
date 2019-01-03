@@ -1,13 +1,17 @@
 //
+// Created by Iván Canales Martín on 2019-01-03.
+//
+
+#ifndef OBJECT_DETECTION_AND_CLASSIFICATION_OBJECTDETECTOR_H
+#define OBJECT_DETECTION_AND_CLASSIFICATION_OBJECTDETECTOR_H
+
+//
 //  ObjectDetector.h
 //  object-detection-and-classification
 //
 //  Created by Iván Canales Martín on 03/01/2019.
 //  Copyright © 2019 Iván Canales Martín. All rights reserved.
 //
-
-#ifndef ObjectDetector_h
-#define ObjectDetector_h
 
 #include <opencv2/opencv.hpp>
 #include "RandomForest.hpp"
@@ -24,8 +28,6 @@ class ObjectDetector {
     int windowStride;
     Class nothingClass;
     RandomForest &rf;
-
-    Class predictPatch(cv::Mat patch);
 public:
     ObjectDetector(RandomForest &rf, Class backgroundClass, int windowStride = 1);
     std::vector<cv::Rect> generateWindows(cv::Mat image);
@@ -35,50 +37,4 @@ public:
     std::vector<DetectedObject> detectObjects(cv::Mat image);
 };
 
-//
-
-// controlClass determines which class will be considered as background and therefore ignored for detection purposes
-ObjectDetector::ObjectDetector(RandomForest &rf, Class backgroundClass, int windowStride)
-        : rf(rf) {
-    this->rf = rf;
-    this->nothingClass = backgroundClass;
-    this->windowStride = windowStride;
-}
-
-std::vector<cv::Rect> ObjectDetector::generateWindows(cv::Mat image) {
-    std::vector<cv::Rect> out;
-    //TODO
-    return out;
-}
-
-Class ObjectDetector::detectClass(cv::Rect rect, cv::Mat img) {
-    //TODO test this
-    cv::Mat subimg = img(rect);
-    std::vector<float> preds = rf.predictImage(subimg);
-    return (int) std::distance(preds.begin(), std::max_element(preds.begin(),preds.end()));
-}
-
-std::vector<DetectedObject> ObjectDetector::detectObjects(cv::Mat image) {
-    std::vector<cv::Rect> windows = this->generateWindows(image);
-
-    // filter out background
-    std::vector<DetectedObject> objs;
-    for (auto win: windows) {
-        Class cls = detectClass(win, cv::Mat());
-        if (cls != nothingClass) {
-            DetectedObject obj {
-                cls,
-                win
-            };
-            objs.push_back(obj);
-        }
-    }
-
-    return objs;
-}
-
-std::vector<DetectedObject> ObjectDetector::nonMaximaSupression(std::vector<DetectedObject> objs) {
-    return objs;
-}
-
-#endif /* ObjectDetector_h */
+#endif //OBJECT_DETECTION_AND_CLASSIFICATION_OBJECTDETECTOR_H

@@ -11,17 +11,12 @@
 // #include <opencv2/highgui.hpp>
 // #include <opencv2/objdetect.hpp>
 
-#include <iostream>
-#include <vector>
-#include <string>
-
 #include "config.h"
 #include "utils.h"
 #include "task1.h"
 #include "RandomForest.hpp"
-#include "ObjectDetector.h"
 
-std::vector<cv::Mat> load_test(cv::String test_path, char val) {
+std::vector<cv::Mat> load_test(const cv::String &test_path, char val) {
     cv::Mat image;
     std::vector<std::string> v;
     cv::String path2(test_path + "0" + val + "/");
@@ -32,10 +27,6 @@ std::vector<cv::Mat> load_test(cv::String test_path, char val) {
         out[idx++] = cv::imread(s, cv::IMREAD_COLOR);
     }
     return out;
-}
-
-std::vector<cv::Mat> load_dataset(cv::String dataset_path) {
-
 }
 
 template <class T>
@@ -72,10 +63,10 @@ void part2(int argc, const char *argv[]) {
 
     char values[6] = {'0','1','2','3','4','5'};
 
-    for (Class j = 0; j < 6; j++) {
-        std::cout << "Expected: " << values[j] << ": " << std::endl;
-        std::vector<cv::Mat> images = load_test(path2, values[j]);
-        for (auto img: images) {
+    for (char value : values) {
+        std::cout << "Expected: " << value << ": " << std::endl;
+        std::vector<cv::Mat> images = load_test(path2, value);
+        for (const auto &img: images) {
             std::vector<float> pred = rf.predictImage(img);
             int k = (int)std::distance(pred.begin(), std::max_element(pred.begin(), pred.end()));
             std::cout << "\tP: " << k << ' ';
