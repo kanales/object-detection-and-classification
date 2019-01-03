@@ -20,8 +20,9 @@ private:
     int minSampleCount;
     int nsample;
     int nClasses = 6;
+    cv::HOGDescriptor hog;
 public:
-    random_forest(int n, int samples, int mc, int f=0, int md=10, int ms=16) {
+    random_forest(int n, int samples, cv::HOGDescriptor hog, int mc, int f=0, int md=10, int ms=16) {
         TreePtr tree;
         numTrees = n;
         for (int i = 0; i < numTrees; i++)
@@ -33,6 +34,7 @@ public:
             tree->setMinSampleCount(ms);
             dtrees.push_back(tree);
         }
+        this->hog = hog;
         nsample = samples;
     }
     
@@ -60,11 +62,6 @@ public:
         }
     }
     
-    // Needs urgent optimization!!
-    void load_dataset(cv::String train_path)
-    {
-    }
-    
     // putting the right training data and the train path can be chosen before (we use it multiple times) (we have to do it differently)
     void train(cv::String train_path){
         // LOAD DATASET
@@ -81,11 +78,11 @@ public:
                 trainLabel.push_back(lab);
             }
         }
-        cv::Mat trainData((int)v.size(),979104,CV_32F);
+        cv::Mat trainData((int)v.size(),(int)hog.getDescriptorSize(),CV_32F);
         // converting in Mat
         int iter = 0;
         for (auto &i : v) {
-            cv::Mat m = cv::Mat(task1(i)).t();
+            cv::Mat m = cv::Mat(extract_descriptor(hog, i)).t();
             // m.convertTo( m, CV_32F );
             m.copyTo(trainData.row(iter));
             //            trainData.row(iter).copyTo(m);
@@ -93,6 +90,7 @@ public:
             iter++;
         }
         
+        // Create samples
         cv::Mat sampleFeatures(nsample, trainData.cols, trainData.type());
         cv::Mat sampleLabels(nsample, 1, CV_32S);
         std::vector<int> vec(nsample);
@@ -107,6 +105,7 @@ public:
                 trainData.row(j).copyTo(sampleFeatures.row(k));
                 (*sampleLabels.ptr<int>(k)) = (*trainLabel.ptr<int>(j));
             }
+            // train tree
             dtrees[i]->train(cv::ml::TrainData::create(sampleFeatures, cv::ml::ROW_SAMPLE, sampleLabels));
         }
     }
