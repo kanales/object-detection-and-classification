@@ -2,13 +2,8 @@
 #define RANDOM_FOREST_H
 
 #include <vector>
-#include <opencv2/opencv.hpp>
-#include "task1.h"
-#include "utils.h"
-
-#include <algorithm>
-#include <iostream>
-
+#include <opencv2/objdetect.hpp>
+#include <opencv2/ml/ml.hpp>
 
 typedef cv::Ptr<cv::ml::DTrees> TreePtr;
 class RandomForest{
@@ -46,6 +41,8 @@ public:
 //  Copyright © 2019 Iván Canales Martín. All rights reserved.
 //
 //#include "RandomForest.hpp"
+#include "utils.h"
+#include "task1.h"
 
 RandomForest::RandomForest(int n, int samples, cv::HOGDescriptor hog, int mc, int f, int md, int ms) {
     TreePtr tree;

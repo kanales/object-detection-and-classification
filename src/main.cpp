@@ -46,16 +46,16 @@ void print_vector(std::vector<T> v) {
     std::cout << " ]";
 }
 
-int main(int argc, const char * argv[]) {
+void part2(int argc, const char *argv[]) {
 
     cv::String imageName( $ROOT "data/task1/obj1000.jpg" );
     cv::String path( $ROOT "data/task2/train/0" );
     cv::String path2( $ROOT "data/task2/test/" );
 
     int ntrees  = 25;
-    int nsample = 300;
+    int nsample = 200;
 
-    if( argc > 1)
+    if(argc > 1)
     {
         imageName = argv[1];
         // string imageName = "./data/task1/obj1000.jpg";
@@ -85,6 +85,24 @@ int main(int argc, const char * argv[]) {
         }
         std::cout << std::endl;
     }
+}
 
+struct S {
+    int a;
+    int b;
+};
+
+int main(int argc, const char * argv[]) {
+    //part2(argc, argv);
+    std::vector<S> vec;
+
+    for (int i = 0; i < 10; i++) {
+        S s {i , -i};
+        vec.push_back(s);
+    }
+
+    for (S x: vec) {
+        std::cout << x.a << ' ' << x.b << std::endl;
+    }
     return 0;
 }
