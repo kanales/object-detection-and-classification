@@ -1,3 +1,6 @@
+#ifndef UTILS_H
+#define UTILS_H
+
 #include <dirent.h>
 #include <iostream>
 #include <sys/types.h>
@@ -6,10 +9,6 @@
 #include <random>
 #include <algorithm>
 #include <iterator>
-
-
-#ifndef UTILSOBJCLASS_H
-#define UTILSOBJCLASS_H
 
 typedef std::vector<std::string> stringvec;
 

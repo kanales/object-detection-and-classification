@@ -1,13 +1,14 @@
-#include <opencv2/opencv.hpp>
-
-#include "config.h"
-
 #ifndef TASK1_H
 #define TASK1_H
 
 #define CELL_SIZE 16
 #define NBINS 8
 #define WIN_SIZE 128
+
+#include <opencv2/opencv.hpp>
+
+#include "config.h"
+#include "hog_visualization.h"
 
 const int N_FEATURES = (WIN_SIZE/CELL_SIZE);
 

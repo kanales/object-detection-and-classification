@@ -15,13 +15,10 @@
 #include <vector>
 #include <string>
 
-#include "hog_visualization.h"
 #include "config.h"
 #include "utils.h"
 #include "task1.h"
-#include "random_forest.h"
-
-#define VERBOSE
+#include "RandomForest.hpp"
 
 cv::Mat create_test(cv::HOGDescriptor hog, cv::String test_path, char val)
 {
@@ -55,7 +52,7 @@ int main(int argc, const char * argv[]) {
     cv::String path( $ROOT "data/task2/train/0" );
     cv::String path2( $ROOT "data/task2/test/" );
 
-    int ntrees  = 20;
+    int ntrees  = 25;
     int nsample = 300;
 
     if( argc > 1)
@@ -65,7 +62,7 @@ int main(int argc, const char * argv[]) {
     }
     // TASK2
     cv::HOGDescriptor hog = mk_hog();
-    random_forest rf(ntrees,nsample, hog, 6);
+    RandomForest rf(ntrees,nsample, hog, 6);
 
     std::cout << "Training forest..." << std::endl;
     rf.train(path);
