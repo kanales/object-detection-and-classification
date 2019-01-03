@@ -8,60 +8,21 @@
 #include "task1.h"
 
 #include <algorithm>
+typedef cv::Ptr<cv::ml::DTrees> TreePtr;
 
 class random_forest{
 private:
     int numTrees;
-    std::vector<cv::Ptr<cv::ml::DTrees>> dtrees;
+    std::vector<TreePtr> dtrees;
     int folds;
     int maxCategories;
     int maxDepth;
     int minSampleCount;
     int nsample;
     int nClasses = 6;
-    
-    void load_data(cv::String train_path) {
-        int iter = 0;
-        std::vector<std::string> v;
-        std::vector<std::string> vfinal;
-        std::vector<int> trainlab;
-        // taking images name
-        for (int lab = 0; lab < 6; lab++) {
-            cv::String path(train_path + std::to_string(lab) + "/");
-            std::vector<std::string> v2;
-            read_directory(path, v2);
-            v.insert(v.end(), v2.begin(), v2.end());
-            // index vector
-            for (size_t j = 0; j < v2.size(); j++) {
-                trainlab.push_back(lab);
-            }
-        }
-        std::vector<int> randid = randomvec(0, (int)v.size()-1, nsample);
-        
-        // rows = 100 ??? cols = 979104
-        
-        cv::Mat trainLabel;
-        
-        for (size_t i = 0; i < nsample; i++) {
-            int x = randid[i];
-            vfinal.push_back(v[x]);
-            trainLabel.push_back(trainlab[x]);
-        }
-        cv::Mat trainData((int)vfinal.size(),979104,CV_32F);
-        // converting in Mat
-        for (auto &i : vfinal) {
-            cv::Mat m = cv::Mat(task1(i)).t();
-            // m.convertTo( m, CV_32F );
-            m.copyTo(trainData.row(iter));
-            //            trainData.row(iter).copyTo(m);
-            
-            iter++;
-        }
-        
-    }
 public:
     random_forest(int n, int samples, int mc, int f=0, int md=10, int ms=16) {
-        cv::Ptr<cv::ml::DTrees> tree;
+        TreePtr tree;
         numTrees = n;
         for (int i = 0; i < numTrees; i++)
         {
@@ -73,8 +34,6 @@ public:
             dtrees.push_back(tree);
         }
         nsample = samples;
-        
-//      load_data(train_path);
     }
     
     void setCVFolds(int val){
@@ -152,7 +111,7 @@ public:
         }
     }
     
-    int predict(cv::Mat sample) {
+    std::vector<float> predict(cv::Mat sample) {
         // create_test(test_path);
         cv::Mat f = sample.reshape(1,1);
         f.convertTo(f, CV_32F);
@@ -167,9 +126,20 @@ public:
             int k = dtrees[j]->predict(f);
             classes[k]++;
         }
-        return (int)std::distance(
-                classes.begin(),
-                std::max_element(classes.begin(),classes.end()));
+        std::vector<float> out(nClasses);
+        float sum = 0;
+        for (auto& n : classes) {
+            sum += n;
+        }
+        
+        for (int j = 0; j < nClasses; j++) {
+            out[j] = classes[j] / sum;
+        }
+        
+        return out;
+//        return (int)std::distance(
+//                classes.begin(),
+//                std::max_element(classes.begin(),classes.end()));
     }
 };
 

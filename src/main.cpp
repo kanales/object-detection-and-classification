@@ -50,7 +50,7 @@ int main(int argc, const char * argv[]) {
     cv::String path( $ROOT "data/task2/train/0" );
     cv::String path2( $ROOT "data/task2/test/" );
 
-    int ntrees  = 20;
+    int ntrees  = 10;
     int nsample = 150;
 
     if( argc > 1)
@@ -73,17 +73,18 @@ int main(int argc, const char * argv[]) {
     char values[6] = {'0','1','2','3','4','5'};
     
     for (int j=0; j < 6; j++) {
-        std::cout << "Expected: " << values[j] << ": ";
+        std::cout << "Expected: " << values[j] << ": " << std::endl;
         test = create_test(path2, values[j]);
         for (int i = 0; i < test.rows; i++) {
-            int pred = rf.predict(test);
-            std::cout << pred << ' ';
+            std::vector<float> pred = rf.predict(test);
+            for (int k = 0; k < 6; k++) {
+                std::cout << pred[k] << ' ';
+            }
+            
+            std::cout << std::endl;
         }
         std::cout << std::endl;
     }
-    
-
-    
     
     return 0;
 }
