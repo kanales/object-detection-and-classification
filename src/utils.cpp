@@ -15,28 +15,30 @@ std::vector<int> randomvec(int range_min, int range_max, int n){
     std::uniform_int_distribution<> dist(range_min, range_max-1);
 
     for (int i = 0; i < n; ++i)
-         v.push_back(dist(mt_eng));
+        v.push_back(dist(mt_eng));
     return v;
 }
 
 
 void printmat(cv::Mat M) {
-  std::cout << "M = "<< std::endl << " "  << cv::format(M, cv::Formatter::FMT_PYTHON) << std::endl << std::endl;
+    std::cout << "M = "<< std::endl << " "  << cv::format(M, cv::Formatter::FMT_PYTHON) << std::endl << std::endl;
 }
 
-void printvec(stringvec v) {
-  // std::copy(v.begin(), v.end(), std::ostream_iterator<std::string>(std::cout, "\n"));
-  for (auto &i: v){
-    std::cout << i << " " << std::endl;
-  }
-  std::cout << std::endl;
+template <class T>
+void print_vector(std::vector<T> v) {
+    std::cout << '[';
+    for (T x: v) {
+        std::cout << '\t' << x;
+    }
+    std::cout << " ]";
 }
+
 
 void read_directory(const std::string& name, stringvec& v)
 {
     DIR* dirp = opendir(name.c_str());
     struct dirent * dp;
-    while (nullptr != (dp = readdir(dirp))) {
+    while ((dp = readdir(dirp)) != NULL) {
         v.push_back(name + dp->d_name);
     }
     closedir(dirp);

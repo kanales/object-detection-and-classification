@@ -1,4 +1,8 @@
 //
+// Created by Iván Canales Martín on 2019-01-04.
+//
+
+//
 //  RandomForest.cpp
 //  object-detection-and-classification
 //
@@ -6,12 +10,11 @@
 //  Copyright © 2019 Iván Canales Martín. All rights reserved.
 //
 //#include "RandomForest.hpp"
-
-#include "RandomForest.hpp"
 #include "utils.h"
 #include "task1.h"
+#include "RandomForest.hpp"
 
-RandomForest::RandomForest(int n, int samples, cv::HOGDescriptor hog, int mc, int f, int md, int ms) {
+RandomForest::RandomForest(int n, int samples, cv::HOGDescriptor& hog, int mc, int f, int md, int ms) {
     TreePtr tree;
     numTrees = n;
     for (int i = 0; i < numTrees; i++)
@@ -111,7 +114,7 @@ std::vector<float> RandomForest::predict(cv::Mat descriptor) {
 
     std::fill(classes.begin(),classes.end(),0);
 
-    for (const auto &tree: dtrees) {
+    for (auto tree: dtrees) {
         classes[tree->predict(f)]++;
     }
 
@@ -128,7 +131,7 @@ std::vector<float> RandomForest::predict(cv::Mat descriptor) {
     return out;
 }
 
-cv::Mat RandomForest::imageToSample(const cv::Mat &images) {
+cv::Mat RandomForest::imageToSample(cv::Mat images) {
     cv::Mat editedImage, grayImage, m;
     std::vector<float> descriptor;
 

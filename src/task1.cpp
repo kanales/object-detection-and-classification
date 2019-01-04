@@ -4,6 +4,7 @@
 
 #include "task1.h"
 
+// building a fixed HOG descriptor
 cv::HOGDescriptor mk_hog() {
     cv::HOGDescriptor hog;
     hog.winSize = cv::Size(WIN_SIZE,WIN_SIZE);
@@ -14,7 +15,8 @@ cv::HOGDescriptor mk_hog() {
     return hog;
 }
 
-void show_descriptor(cv::HOGDescriptor hog, cv::String imageName) {
+// function that given an image extract his descriptor and visualize it
+void show_descriptor(cv::HOGDescriptor& hog, cv::String imageName) {
     cv::Mat image, editedImage, grayImg;
     std::vector<float> descriptor;
     image = cv::imread(imageName, cv::IMREAD_COLOR);
@@ -37,7 +39,8 @@ void show_descriptor(cv::HOGDescriptor hog, cv::String imageName) {
     }
 }
 
-std::vector<float> extract_descriptor(cv::HOGDescriptor hog, cv::String imageName) {
+// function that given an image extract his descriptor
+std::vector<float> extract_descriptor(cv::HOGDescriptor& hog, cv::String imageName) {
     cv::Mat image, editedImage, grayImg;
     std::vector<float> descriptor;
     image = cv::imread(imageName, cv::IMREAD_COLOR);
@@ -53,4 +56,20 @@ std::vector<float> extract_descriptor(cv::HOGDescriptor hog, cv::String imageNam
         hog.compute(grayImg,descriptor);
     }
     return descriptor;
+}
+
+// execute task 1
+// maybe has to be more interactive with the user
+void part1(int argc, const char *argv[]) {
+    cv::String imageName( $ROOT "data/task1/obj1000.jpg" );
+
+    if(argc > 1)
+    {
+        imageName = argv[1];
+    }
+    // TASK1
+    cv::HOGDescriptor hog = mk_hog();
+
+    std::cout << "Building descriptor and visualizing the descriptor (press any key to continue...)" << std::endl;
+    show_descriptor(hog, imageName);
 }

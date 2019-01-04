@@ -19,18 +19,18 @@ private:
     cv::HOGDescriptor hog;
 
     // used for predicting from a list of images
-    cv::Mat imageToSample(const cv::Mat &images);
+    cv::Mat imageToSample(cv::Mat images);
 public:
-    RandomForest(int n, int samples, cv::HOGDescriptor hog, int mc, int f=0, int md=10, int ms=10);
-    
+    RandomForest(int n, int samples, cv::HOGDescriptor& hog, int mc, int f=0, int md=10, int ms=10);
+
     void setCVFolds(int val);
-    
+
     void setMaxCategories(int val);
-    
+
     void setMaxDepth(int val);
-    
+
     void setSampleCount(int val);
-    
+
     // putting the right training data and the train path can be chosen before (we use it multiple times) (we have to do it differently)
     void train(cv::String train_path);
     std::vector<float> predict(cv::Mat sample);
