@@ -3,7 +3,18 @@
 //
 #include "task3.h"
 
-void image_rotation(cv::String imagePath, int angle){
+#include <opencv2/opencv.hpp>
+
+#include "utils.h"
+#include "RandomForest.hpp"
+#include "config.h"
+#include "task1.h"
+
+#include "ObjectDetector.h"
+
+cv::String newPath( $ROOT "data/task3/train_new/0" );
+
+void image_rotation(cv::String imagePath, int angle, cv::String lab){
 
   cv::Mat src = cv::imread(imagePath); //, CV_LOAD_IMAGE_UNCHANGED);
 
@@ -19,41 +30,63 @@ void image_rotation(cv::String imagePath, int angle){
   cv::Mat dst;
   cv::warpAffine(src, dst, rot, bbox.size());
   imagePath = imagePath.substr(0,imagePath.length()-4);
-  cv::imwrite(imagePath + "rot" + std::to_string(angle) + ".jpg", dst);   // put a different name
+  cv::String imageName = imagePath.substr(imagePath.length()-4,imagePath.length());
+  cv::imwrite(newPath + lab + "/" + imageName + lab + "rot" + std::to_string(angle) + ".jpg", dst);   // put a different name
 
 }
 
-void image_flip(cv::String imagePath){
+void image_flip(cv::String imagePath, cv::String lab){
 
   // do this for all the image??
   cv::Mat src = cv::imread(imagePath);
   cv::Mat dst;               // dst must be a different Mat
   cv::flip(src, dst, 1);     // because you can't flip in-place (leads to segfault)
   imagePath = imagePath.substr(0,imagePath.length()-4);
-  cv::imwrite(imagePath + "flip.jpg", dst);   // put a different name
+  cv::String imageName = imagePath.substr(imagePath.length()-4,imagePath.length());
+  cv::imwrite(newPath + lab + "/" + imageName + lab + "flip.jpg", dst);   // put a different name
 }
 
 void data_augmentation(cv::String train_path) {
   for (int lab = 0; lab < 4; lab++) {
     std::vector<std::string> v;
-    cv::String path( train_path + std::to_string(lab) + "/" );
+    cv::String string_lab(std::to_string(lab));
+    cv::String path( train_path + string_lab + "/" );
     read_directory(path, v);
     for (auto &img : v) {
-        image_flip(img);
-        for (int i = 90; i < 360; i+=90) {
-          image_rotation(img,i);
+        image_flip(img,string_lab);
+        for (int i = 0; i < 360; i+=90) {
+          image_rotation(img,i,string_lab);
         }
     }
   }
 }
 
+
+
+
 // execute task 3
 void part3(int argc, const char *argv[]) {
-    cv::String path( $ROOT "data/task3/train/0" );
-    cv::String path2( $ROOT "data/task3/test/" );
+    cv::String path( $ROOT "data/task3/train_new/0" );
+    cv::String path2( $ROOT "data/task3/test/0000.jpg" );
 
-    std::cout << "Augmenting..." << std::endl;
-    data_augmentation(path);
+    //std::cout << "Augmenting..." << std::endl;
+    //data_augmentation(path);
 
-    //TODO
+    int ntrees  = 20;
+    int nsample = -1;
+
+    cv::HOGDescriptor hog = mk_hog();
+    RandomForest rf(ntrees,nsample, hog, 2);
+
+    std::cout << "Training forest..." << std::endl;
+    rf.train(path);
+    std::cout << "Done training." << std::endl;
+
+    ObjectDetector od(rf, 1, 1);
+
+    cv::Mat image = cv::imread(path2, cv::IMREAD_COLOR);
+
+    od.detectObjects(image);
+
+
 }

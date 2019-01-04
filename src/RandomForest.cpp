@@ -26,8 +26,11 @@ RandomForest::RandomForest(int n, int samples, cv::HOGDescriptor& hog, int mc, i
         tree->setMinSampleCount(ms);
         dtrees.push_back(tree);
     }
+
+    this->nClasses = mc;
     this->hog = hog;
     nsample = samples;
+
 }
 
 void RandomForest::setCVFolds(int val){
@@ -60,7 +63,7 @@ void RandomForest::train(cv::String train_path){
     std::vector<std::string> v;
     cv::Mat trainLabel;
     // taking images name
-    for (int lab = 0; lab < 6; lab++) {
+    for (int lab = 0; lab < nClasses ; lab++) {
         cv::String path(train_path + std::to_string(lab) + "/");
         std::vector<std::string> v2;
         read_directory(path, v2);

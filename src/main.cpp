@@ -11,7 +11,7 @@
 #include "task3.h"
 
 int main(int argc, const char * argv[]) {
-    part1(argc,argv);
-    part2(argc, argv);
+    //part1(argc,argv);
+    //part2(argc, argv);
     part3(argc, argv);
 }
