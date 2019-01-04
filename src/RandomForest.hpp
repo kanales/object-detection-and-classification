@@ -21,16 +21,16 @@ private:
     // used for predicting from a list of images
     cv::Mat imageToSample(cv::Mat images);
 public:
-    RandomForest(int n, int samples, cv::HOGDescriptor hog, int mc, int f=0, int md=10, int ms=10);
-    
+    RandomForest(int n, int samples, cv::HOGDescriptor& hog, int mc, int f=0, int md=10, int ms=10);
+
     void setCVFolds(int val);
-    
+
     void setMaxCategories(int val);
-    
+
     void setMaxDepth(int val);
-    
+
     void setSampleCount(int val);
-    
+
     // putting the right training data and the train path can be chosen before (we use it multiple times) (we have to do it differently)
     void train(cv::String train_path);
     std::vector<float> predict(cv::Mat sample);
@@ -49,7 +49,7 @@ public:
 #include "utils.h"
 #include "task1.h"
 
-RandomForest::RandomForest(int n, int samples, cv::HOGDescriptor hog, int mc, int f, int md, int ms) {
+RandomForest::RandomForest(int n, int samples, cv::HOGDescriptor& hog, int mc, int f, int md, int ms) {
     TreePtr tree;
     numTrees = n;
     for (int i = 0; i < numTrees; i++)
@@ -113,7 +113,7 @@ void RandomForest::train(cv::String train_path){
         // m.convertTo( m, CV_32F );
         m.copyTo(trainData.row(iter));
         //            trainData.row(iter).copyTo(m);
-        
+
         iter++;
     }
     int n = nsample;
@@ -125,7 +125,7 @@ void RandomForest::train(cv::String train_path){
     for (size_t i = 0; i < numTrees; i++)
     {
         std::cout << i+1 << '/' << numTrees << std::endl;
-        
+
         // Sampling
         vec =  randomvec(0,trainData.rows, n);
         for (int j,k = 0; k < n; k++) {
@@ -142,11 +142,11 @@ std::vector<float> RandomForest::predict(cv::Mat descriptor) {
     // create_test(test_path);
     cv::Mat f = descriptor.reshape(1,1);
     f.convertTo(f, CV_32F);
-    
+
     std::vector<int> vout;
     std::vector<int> classes(nClasses);
     // predictions contains all the predictions, for each tree(row) for each sample(col)
-    
+
     std::fill(classes.begin(),classes.end(),0);
 
     for (auto tree: dtrees) {
@@ -158,11 +158,11 @@ std::vector<float> RandomForest::predict(cv::Mat descriptor) {
     for (auto& n : classes) {
         sum += n;
     }
-    
+
     for (int j = 0; j < nClasses; j++) {
         out[j] = classes[j] / sum;
     }
-    
+
     return out;
 }
 

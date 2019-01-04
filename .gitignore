@@ -103,6 +103,7 @@ DerivedData/
 # Exercise 2
 data/*
 output/*
+src/config.h
 
 # Created by https://www.gitignore.io/api/clion
 # Edit at https://www.gitignore.io/?templates=clion

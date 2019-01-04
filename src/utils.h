@@ -29,13 +29,15 @@ void printmat(cv::Mat M) {
   std::cout << "M = "<< std::endl << " "  << cv::format(M, cv::Formatter::FMT_PYTHON) << std::endl << std::endl;
 }
 
-void printvec(stringvec v) {
-  // std::copy(v.begin(), v.end(), std::ostream_iterator<std::string>(std::cout, "\n"));
-  for (auto &i: v){
-    std::cout << i << " " << std::endl;
-  }
-  std::cout << std::endl;
+template <class T>
+void print_vector(std::vector<T> v) {
+    std::cout << '[';
+    for (T x: v) {
+        std::cout << '\t' << x;
+    }
+    std::cout << " ]";
 }
+
 
 void read_directory(const std::string& name, stringvec& v)
 {
