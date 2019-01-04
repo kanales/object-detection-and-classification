@@ -66,27 +66,28 @@ void data_augmentation(cv::String train_path) {
 
 // execute task 3
 void part3(int argc, const char *argv[]) {
-    cv::String path( $ROOT "data/task3/train_new/0" );
-    cv::String path2( $ROOT "data/task3/test/0000.jpg" );
+  // cv::String path( $ROOT "data/task3/train/0" );
+  cv::String path( $ROOT "data/task3/train_new/0" );
+  cv::String path2( $ROOT "data/task3/test/0000.jpg" );
 
-    //std::cout << "Augmenting..." << std::endl;
-    //data_augmentation(path);
+  // std::cout << "Augmenting..." << std::endl;
+  // data_augmentation(path);
 
-    int ntrees  = 20;
-    int nsample = -1;
+  int ntrees  = 5;
+  int nsample = -1;
 
-    cv::HOGDescriptor hog = mk_hog();
-    RandomForest rf(ntrees,nsample, hog, 2);
+  cv::HOGDescriptor hog = mk_hog();
+  RandomForest rf(ntrees,nsample, hog, 2);
 
-    std::cout << "Training forest..." << std::endl;
-    rf.train(path);
-    std::cout << "Done training." << std::endl;
+  std::cout << "Training forest..." << std::endl;
+  rf.train(path);
+  std::cout << "Done training." << std::endl;
 
-    ObjectDetector od(rf, 1, 1);
+  ObjectDetector od(rf, 1, 1);
 
-    cv::Mat image = cv::imread(path2, cv::IMREAD_COLOR);
+  cv::Mat image = cv::imread(path2, cv::IMREAD_COLOR);
 
-    od.detectObjects(image);
+  od.detectObjects(image);
 
 
 }

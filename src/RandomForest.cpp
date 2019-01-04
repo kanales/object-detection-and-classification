@@ -16,44 +16,44 @@
 
 RandomForest::RandomForest(int n, int samples, cv::HOGDescriptor& hog, int mc, int f, int md, int ms) {
     TreePtr tree;
-    numTrees = n;
-    for (int i = 0; i < numTrees; i++)
+    this->numTrees = n;
+    for (int i = 0; i < this->numTrees; i++)
     {
         tree = cv::ml::DTrees::create();
         tree->setCVFolds(f);
         tree->setMaxCategories(mc);
         tree->setMaxDepth(md);
         tree->setMinSampleCount(ms);
-        dtrees.push_back(tree);
+        this->dtrees.push_back(tree);
     }
 
     this->nClasses = mc;
     this->hog = hog;
-    nsample = samples;
+    this->nsample = samples;
 
 }
 
 void RandomForest::setCVFolds(int val){
-    for (size_t i = 0; i < numTrees; i++) {
-        dtrees[i]->setCVFolds(val /*10*/); // nonzero causes core dump
+    for (size_t i = 0; i < this->numTrees; i++) {
+        this->dtrees[i]->setCVFolds(val /*10*/); // nonzero causes core dump
     }
 }
 
 void RandomForest::setMaxCategories(int val){
-    for (size_t i = 0; i < numTrees; i++) {
-        dtrees[i]->setMaxCategories(val);
+    for (size_t i = 0; i < this->numTrees; i++) {
+        this->dtrees[i]->setMaxCategories(val);
     }
 }
 
 void RandomForest::setMaxDepth(int val){
-    for (size_t i = 0; i < numTrees; i++) {
-        dtrees[i]->setMaxDepth(val );
+    for (size_t i = 0; i < this->numTrees; i++) {
+        this->dtrees[i]->setMaxDepth(val );
     }
 }
 
 void RandomForest::setSampleCount(int val){
-    for (size_t i = 0; i < numTrees; i++) {
-        dtrees[i]->setMinSampleCount(val );
+    for (size_t i = 0; i < this->numTrees; i++) {
+        this->dtrees[i]->setMinSampleCount(val );
     }
 }
 
@@ -63,7 +63,7 @@ void RandomForest::train(cv::String train_path){
     std::vector<std::string> v;
     cv::Mat trainLabel;
     // taking images name
-    for (int lab = 0; lab < nClasses ; lab++) {
+    for (int lab = 0; lab < this->nClasses ; lab++) {
         cv::String path(train_path + std::to_string(lab) + "/");
         std::vector<std::string> v2;
         read_directory(path, v2);
@@ -84,15 +84,15 @@ void RandomForest::train(cv::String train_path){
 
         iter++;
     }
-    int n = nsample;
-    if (nsample == -1) n = trainData.rows;
+    int n = this->nsample;
+    if (this->nsample == -1) n = trainData.rows;
     // Create samples
     cv::Mat sampleFeatures(n, trainData.cols, trainData.type());
     cv::Mat sampleLabels(n, 1, CV_32S);
     std::vector<int> vec(n);
-    for (size_t i = 0; i < numTrees; i++)
+    for (size_t i = 0; i < this->numTrees; i++)
     {
-        std::cout << i+1 << '/' << numTrees << std::endl;
+        std::cout << i+1 << '/' << this->numTrees << std::endl;
 
         // Sampling
         vec =  randomvec(0,trainData.rows, n);
@@ -102,7 +102,7 @@ void RandomForest::train(cv::String train_path){
             (*sampleLabels.ptr<int>(k)) = (*trainLabel.ptr<int>(j));
         }
         // train tree
-        dtrees[i]->train(cv::ml::TrainData::create(sampleFeatures, cv::ml::ROW_SAMPLE, sampleLabels));
+        this->dtrees[i]->train(cv::ml::TrainData::create(sampleFeatures, cv::ml::ROW_SAMPLE, sampleLabels));
     }
 }
 
@@ -111,24 +111,23 @@ std::vector<float> RandomForest::predict(cv::Mat descriptor) {
     cv::Mat f = descriptor.reshape(1,1);
     f.convertTo(f, CV_32F);
 
-    std::vector<int> vout;
-    std::vector<int> classes(nClasses);
+    std::vector<int> classes(this->nClasses);
     // predictions contains all the predictions, for each tree(row) for each sample(col)
 
     std::fill(classes.begin(),classes.end(),0);
 
-    for (auto tree: dtrees) {
+    for (auto tree: this->dtrees) {
         classes[tree->predict(f)]++;
     }
 
-    std::vector<float> out(nClasses);
+    std::vector<float> out(this->nClasses);
     float sum = 0;
     for (auto& n : classes) {
         sum += n;
     }
 
-    for (int j = 0; j < nClasses; j++) {
-        out[j] = classes[j] / sum;
+    for (int j = 0; j < this->nClasses; j++) {
+        out[j] = (float) classes[j] / sum;
     }
 
     return out;
@@ -140,7 +139,7 @@ cv::Mat RandomForest::imageToSample(cv::Mat images) {
 
     cv::resize(images, editedImage, cv::Size(128,128));
     cv::cvtColor(editedImage, grayImage, cv::COLOR_RGB2GRAY);
-    hog.compute(grayImage,descriptor);
+    this->hog.compute(grayImage,descriptor);
     return cv::Mat(descriptor);
 }
 

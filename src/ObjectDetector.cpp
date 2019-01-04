@@ -5,6 +5,7 @@
 //
 
 #include "ObjectDetector.h"
+#include "utils.h"
 
 // controlClass determines which class will be considered as background and therefore ignored for detection purposes
 ObjectDetector::ObjectDetector(RandomForest &rf, Class backgroundClass, int windowStride)
@@ -18,16 +19,9 @@ std::vector<cv::Rect> ObjectDetector::generateWindows(cv::Mat image) {
     std::vector<cv::Rect> out;
 
     // sliding window size
-    int windows_rows = 10;
-    int windows_cols = 10;
-    int StepSlide = 5; //change
-
-    std::cout << "in genWind" << '\n';
-
-
-    std::cout << image.cols << std::endl;
-
-    std::cout << image.rows << std::endl;
+    int windows_rows = 20;
+    int windows_cols = 20;
+    int StepSlide = 10; //change
 
     for (int col = 0; col <= image.cols - windows_cols; col += StepSlide){
 
@@ -47,16 +41,19 @@ std::vector<cv::Rect> ObjectDetector::generateWindows(cv::Mat image) {
 Class ObjectDetector::detectClass(cv::Rect rect, cv::Mat img) {
 
     //TODO test this
-
+    // cv::Mat subimg = cv::Mat(img,rect);
     cv::Mat subimg = img(rect);
-    std::vector<float> preds = rf.predictImage(subimg);
-    return (int) std::distance(preds.begin(), std::max_element(preds.begin(),preds.end()));
+    std::vector<float> preds = this->rf.predictImage(subimg);
+    int c = (int) std::distance(preds.begin(), std::max_element(preds.begin(),preds.end()));
+    float confidence = preds[c];
+    if(confidence < 0.5)
+      return -1;
+    return c;
 
 }
 
 std::vector<DetectedObject> ObjectDetector::detectObjects(cv::Mat image) {
 
-    std::cout << "in detObj" << '\n';
     std::vector<cv::Rect> windows = this->generateWindows(image);
 
     int countBack = 0;
@@ -73,7 +70,7 @@ std::vector<DetectedObject> ObjectDetector::detectObjects(cv::Mat image) {
           countObj++;
 
 
-        if (cls != nothingClass) {
+        if (cls != nothingClass && cls != -1) {
 
             DetectedObject obj {
                     cls,

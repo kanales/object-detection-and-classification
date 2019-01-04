@@ -21,7 +21,7 @@ private:
     // used for predicting from a list of images
     cv::Mat imageToSample(cv::Mat images);
 public:
-    RandomForest(int n, int samples, cv::HOGDescriptor& hog, int mc, int f=0, int md=20, int ms=10);
+    RandomForest(int n, int samples, cv::HOGDescriptor& hog, int mc, int f=0, int md=100, int ms=100);
 
     void setCVFolds(int val);
 
