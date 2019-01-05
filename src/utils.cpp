@@ -4,9 +4,6 @@
 
 #include "utils.h"
 
-#include <dirent.h>
-#include <random>
-
 std::vector<int> randomvec(int range_min, int range_max, int n){
     std::random_device rd; // seed for PRNG
     std::mt19937 mt_eng(rd()); // mersenne-twister engine initialised with seed
@@ -44,4 +41,21 @@ void read_directory(const std::string& name, stringvec& v)
     closedir(dirp);
     v.erase(std::remove(v.begin(), v.end(), name + "."), v.end());
     v.erase(std::remove(v.begin(), v.end(), name + ".."), v.end());
+}
+
+void print_vector(const std::vector<float> &vec) {
+    for (float el: vec) {
+        std::cout << el << ' ';
+    }
+}
+
+// building a fixed HOG descriptor
+cv::HOGDescriptor mk_hog() {
+    cv::HOGDescriptor hog;
+    hog.winSize = cv::Size(WIN_SIZE,WIN_SIZE);
+    hog.blockSize = cv::Size(2*CELL_SIZE,2*CELL_SIZE);
+    hog.blockStride = cv::Size(CELL_SIZE,CELL_SIZE);
+    hog.cellSize = cv::Size(CELL_SIZE,CELL_SIZE);
+    hog.nbins = NBINS;
+    return hog;
 }

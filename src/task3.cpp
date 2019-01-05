@@ -4,7 +4,7 @@
 #include "task3.h"
 
 #include "RandomForest.hpp"
-#include "task1.h"
+#include "ObjectDetector.h"
 
 cv::String newPath( $ROOT "data/task3/train_new/0" );
 
@@ -67,21 +67,31 @@ void part3(int argc, const char *argv[]) {
   // std::cout << "Augmenting..." << std::endl;
   // data_augmentation(path);
 
-  int ntrees  = 5;
-  int nsample = RandomForest::ALL_SAMPLES;
+  int ntrees  = 22;
+  int nsample = 500;//RandomForest::ALL_SAMPLES;
 
   cv::HOGDescriptor hog = mk_hog();
-  RandomForest rf(ntrees,nsample, hog, 2);
+  RandomForest rf(ntrees,nsample, hog, 4);
 
   std::cout << "Training forest..." << std::endl;
-  rf.train(path);
+  auto [feats, labels]  = rf.load_train(path);
+  rf.train(feats, labels);
   std::cout << "Done training." << std::endl;
 
-  //ObjectDetector od(rf, 1, 1);
+  ObjectDetector od(rf, 3);
 
-  //cv::Mat image = cv::imread(path2, cv::IMREAD_COLOR);
+  cv::Mat image = cv::imread(path2, cv::IMREAD_COLOR);
 
-  //od.detectObjects(image);
+  std::vector<DetectedObject> objs = od.detectObjects(image);
 
+  for (auto el: objs) {
+    std::cout << el.confidence << ' ';
+  }
 
+  for (DetectedObject v: objs) {
+    cv::rectangle(image, v.rect, cv::Scalar(0,0,255));
+
+  }
+  cv::imshow("Image", image);
+  cv::waitKey();
 }

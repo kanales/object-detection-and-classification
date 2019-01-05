@@ -22,16 +22,19 @@ typedef int Class;
 struct DetectedObject {
     Class cls; // class of the object
     cv::Rect rect; // delimiting rect of the object
+    float confidence;
 };
 
 class ObjectDetector {
     int windowStride;
     Class nothingClass;
     RandomForest &rf;
+    float bgCutoff;
+    cv::Size winSize;
 public:
-    ObjectDetector(RandomForest &rf, Class backgroundClass, int windowStride = 1);
-    std::vector<cv::Rect> generateWindows(cv::Mat image);
-    Class detectClass(cv::Rect rect, cv::Mat img);
+    ObjectDetector(RandomForest &rf, Class backgroundClass, int windowStride = 5, float bgCutoff = 0.50);
+    std::vector<cv::Rect> generateWindows(cv::Mat image, cv::Size winSize, float scaleFactor, int iterations);
+    std::tuple<Class, float> detectClass(cv::Rect rect, cv::Mat img);
     std::vector<DetectedObject> nonMaximaSupression(std::vector<DetectedObject> objs);
     // Returns a list of
     std::vector<DetectedObject> detectObjects(cv::Mat image);

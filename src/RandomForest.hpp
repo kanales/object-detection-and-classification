@@ -2,6 +2,7 @@
 #define RANDOM_FOREST_H
 
 #include <vector>
+#include <opencv2/opencv.hpp>
 #include <opencv2/objdetect.hpp>
 #include <opencv2/ml/ml.hpp>
 
@@ -16,25 +17,19 @@ private:
     int minSampleCount;
     int nsample;
     int nClasses;
-    cv::HOGDescriptor hog;
 
     // used for predicting from a list of images
     cv::Mat imageToSample(cv::Mat images);
+
 public:
+    cv::HOGDescriptor hog;
     static const int ALL_SAMPLES = -1;
 
+    std::tuple<cv::Mat, cv::Mat> load_train(cv::String train_path);
     RandomForest(int n, int samples, cv::HOGDescriptor& hog, int mc, int f=0, int md=100, int ms=100);
 
-    void setCVFolds(int val);
-
-    void setMaxCategories(int val);
-
-    void setMaxDepth(int val);
-
-    void setSampleCount(int val);
-
     // putting the right training data and the train path can be chosen before (we use it multiple times) (we have to do it differently)
-    void train(cv::String train_path);
+    void train(cv::Mat &train_features, cv::Mat &train_label);
     std::vector<float> predict(cv::Mat sample);
     std::vector<float> predictImage(cv::Mat images);
 

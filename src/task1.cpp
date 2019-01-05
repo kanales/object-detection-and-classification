@@ -4,17 +4,6 @@
 
 #include "task1.h"
 
-// building a fixed HOG descriptor
-cv::HOGDescriptor mk_hog() {
-    cv::HOGDescriptor hog;
-    hog.winSize = cv::Size(WIN_SIZE,WIN_SIZE);
-    hog.blockSize = cv::Size(2*CELL_SIZE,2*CELL_SIZE);
-    hog.blockStride = cv::Size(CELL_SIZE,CELL_SIZE);
-    hog.cellSize = cv::Size(CELL_SIZE,CELL_SIZE);
-    hog.nbins = NBINS;
-    return hog;
-}
-
 // function that given an image extract his descriptor and visualize it
 void show_descriptor(cv::HOGDescriptor& hog, cv::String imageName) {
     cv::Mat image, editedImage, grayImg;
@@ -28,13 +17,13 @@ void show_descriptor(cv::HOGDescriptor& hog, cv::String imageName) {
     else {
         cv::resize(image, editedImage, cv::Size(WIN_SIZE,WIN_SIZE)); // Check later if it's correct!
 
-        cv::cvtColor(editedImage, grayImg, cv::COLOR_RGB2GRAY);
-        std::cout << descriptor.size() << std::endl;
+        //cv::cvtColor(editedImage, grayImg, cv::COLOR_RGB2GRAY);
+        //std::cout << descriptor.size() << std::endl;
         // HOG descriptor
 
-        hog.compute(grayImg,descriptor);
+        hog.compute(editedImage,descriptor);
         // for task 1 execute this
-        visualizeHOG(grayImg, descriptor, hog);
+        visualizeHOG(editedImage, descriptor, hog);
         cv::waitKey(0);
     }
 }
@@ -50,6 +39,7 @@ std::vector<float> extract_descriptor(cv::HOGDescriptor& hog, cv::String imageNa
         std::cout <<  "Could not open or find the image " << imageName << std::endl ;
     }
     else{
+
         cv::resize(image, editedImage, cv::Size(128,128)); // Check later if it's correct!
         cv::cvtColor(editedImage, grayImg, cv::COLOR_RGB2GRAY);
 
