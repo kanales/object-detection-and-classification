@@ -50,8 +50,8 @@ std::tuple<Class, float> ObjectDetector::detectClass(cv::Rect rect, cv::Mat img)
     float probBG = preds[nothingClass];
     float confidence = preds[c];
     // in case of doubt...
-    if(confidence < 0.5)
-      return {nothingClass, probBG};
+    if(confidence < 0.7)
+      return {nothingClass, bgCutoff};
 
     return {c, confidence};
 }
@@ -88,11 +88,11 @@ std::vector<DetectedObject> ObjectDetector::detectObjects(cv::Mat image) {
         }
     }
 
-    return (objs);
+    return nonMaximaSupression(objs);
 }
 
 // todo finish
-std::vector<DetectedObject> ObjectDetector::nonMaximaSupression(std::vector<DetectedObject> objs) {
+std::vector<DetectedObject> ObjectDetector::nonMaximaSupression(std::vector<DetectedObject> &objs) {
     std::vector<DetectedObject> out;
     //sort by confidence
     std::sort(objs.begin(), objs.end(), [](DetectedObject a, DetectedObject b) {
@@ -100,19 +100,17 @@ std::vector<DetectedObject> ObjectDetector::nonMaximaSupression(std::vector<Dete
         return a.confidence > b.confidence;
     });
 
-    while (!objs.empty()) {
-        DetectedObject o = objs.front(); // get element with most confidence
+    auto end   = objs.end();
+    auto begin = objs.begin();
+    while (begin != end) {
+        DetectedObject o = *begin; // get element with most confidence
+        std::cout << o.cls;
         out.push_back(o);
-        std::remove_if(objs.begin(), objs.end(), [&o] (DetectedObject el) {
-            DetectedObject* smaller;
-            if (el.rect.area() < o.rect.area()) {
-                smaller = &el;
-            }  else {
-                smaller = &o;
-            }
-
-            float ratio = (float)(el.rect & o.rect).area() / smaller->rect.area();
-            return (el.cls == o.cls) && (ratio > 0.5);
+        end = std::remove_if(begin, end, [&o] (DetectedObject el) {
+            //todo adjust threshold
+            float thr = 0.25; // For now delete if intersects and
+            float ratio = (float)(el.rect & o.rect).area() / (el.rect | o.rect).area();
+            return (el.cls == o.cls) && (ratio > thr);
         });
     }
     return out;

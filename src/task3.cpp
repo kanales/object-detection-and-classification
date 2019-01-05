@@ -67,8 +67,8 @@ void part3(int argc, const char *argv[]) {
   // std::cout << "Augmenting..." << std::endl;
   // data_augmentation(path);
 
-  int ntrees  = 22;
-  int nsample = 500;//RandomForest::ALL_SAMPLES;
+  int ntrees  = 20;
+  int nsample = RandomForest::ALL_SAMPLES;
 
   cv::HOGDescriptor hog = mk_hog();
   RandomForest rf(ntrees,nsample, hog, 4);
