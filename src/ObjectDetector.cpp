@@ -17,14 +17,14 @@ ObjectDetector::ObjectDetector(RandomForest &rf, Class backgroundClass, int wind
     this->winSize = rf.hog.winSize;
 }
 
+// Update so it uses changes in scale?
 std::vector<cv::Rect>
-ObjectDetector::generateWindows(cv::Mat image, cv::Size winSize, float scaleFactor, int iterations) {
+ObjectDetector::generateWindows(cv::Mat image, cv::Size winSize) {
     std::vector<cv::Rect> out;
 
     // sliding window size
     //int windows_rows = 20;
     //int windows_cols = 20;
-    winSize = rf.hog.winSize;
     for (int col = 0; col <= image.cols - winSize.width; col += windowStride){
         for (int row = 0; row <= image.rows - winSize.height; row += windowStride){
             cv::Rect window({col, row}, winSize);
@@ -32,7 +32,7 @@ ObjectDetector::generateWindows(cv::Mat image, cv::Size winSize, float scaleFact
             //  cv::Mat window_image = cv::Mat(image,window); // window content in Mat format
         }
     }
-    winSize = {(int) std::ceil(winSize.width * scaleFactor), (int) std::ceil(winSize.height*scaleFactor)};
+    //winSize = {(int) std::ceil(winSize.width * scaleFactor), (int) std::ceil(winSize.height*scaleFactor)};
 
 
     return out;
@@ -49,16 +49,16 @@ std::tuple<Class, float> ObjectDetector::detectClass(cv::Rect rect, cv::Mat img)
     int c = (int) std::distance(preds.begin(), std::max_element(preds.begin(),preds.end()));
     float probBG = preds[nothingClass];
     float confidence = preds[c];
+    // in case of doubt...
     if(confidence < 0.5)
       return {nothingClass, probBG};
 
-    std::cout << c << std::endl;
     return {c, confidence};
 }
 
 std::vector<DetectedObject> ObjectDetector::detectObjects(cv::Mat image) {
 
-    std::vector<cv::Rect> windows = this->generateWindows(image, image.size(), 0.8, 1);
+    std::vector<cv::Rect> windows = this->generateWindows(image, rf.hog.winSize); // 1:1 window size
 
     int countBack = 0;
     int countObj = 0;
@@ -88,9 +88,32 @@ std::vector<DetectedObject> ObjectDetector::detectObjects(cv::Mat image) {
         }
     }
 
-    return objs;
+    return (objs);
 }
 
+// todo finish
 std::vector<DetectedObject> ObjectDetector::nonMaximaSupression(std::vector<DetectedObject> objs) {
-    return objs;
+    std::vector<DetectedObject> out;
+    //sort by confidence
+    std::sort(objs.begin(), objs.end(), [](DetectedObject a, DetectedObject b) {
+        // sort into descending confidences
+        return a.confidence > b.confidence;
+    });
+
+    while (!objs.empty()) {
+        DetectedObject o = objs.front(); // get element with most confidence
+        out.push_back(o);
+        std::remove_if(objs.begin(), objs.end(), [&o] (DetectedObject el) {
+            DetectedObject* smaller;
+            if (el.rect.area() < o.rect.area()) {
+                smaller = &el;
+            }  else {
+                smaller = &o;
+            }
+
+            float ratio = (float)(el.rect & o.rect).area() / smaller->rect.area();
+            return (el.cls == o.cls) && (ratio > 0.5);
+        });
+    }
+    return out;
 }
