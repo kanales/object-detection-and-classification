@@ -3,18 +3,12 @@
 //
 #include "task3.h"
 
-#include <opencv2/opencv.hpp>
-
-#include "utils.h"
 #include "RandomForest.hpp"
-#include "config.h"
 #include "task1.h"
-
-#include "ObjectDetector.h"
 
 cv::String newPath( $ROOT "data/task3/train_new/0" );
 
-void image_rotation(cv::String imagePath, int angle, cv::String lab){
+void image_rotation(cv::String imagePath, int angle, const cv::String &lab){
 
   cv::Mat src = cv::imread(imagePath); //, CV_LOAD_IMAGE_UNCHANGED);
 
@@ -35,7 +29,7 @@ void image_rotation(cv::String imagePath, int angle, cv::String lab){
 
 }
 
-void image_flip(cv::String imagePath, cv::String lab){
+void image_flip(cv::String imagePath, const cv::String &lab){
 
   // do this for all the image??
   cv::Mat src = cv::imread(imagePath);
@@ -67,14 +61,14 @@ void data_augmentation(cv::String train_path) {
 // execute task 3
 void part3(int argc, const char *argv[]) {
   // cv::String path( $ROOT "data/task3/train/0" );
-  cv::String path( $ROOT "data/task3/train_new/0" );
+  cv::String path( $ROOT "data/task3/train/0" );
   cv::String path2( $ROOT "data/task3/test/0000.jpg" );
 
   // std::cout << "Augmenting..." << std::endl;
   // data_augmentation(path);
 
   int ntrees  = 5;
-  int nsample = -1;
+  int nsample = RandomForest::ALL_SAMPLES;
 
   cv::HOGDescriptor hog = mk_hog();
   RandomForest rf(ntrees,nsample, hog, 2);
@@ -83,11 +77,11 @@ void part3(int argc, const char *argv[]) {
   rf.train(path);
   std::cout << "Done training." << std::endl;
 
-  ObjectDetector od(rf, 1, 1);
+  //ObjectDetector od(rf, 1, 1);
 
-  cv::Mat image = cv::imread(path2, cv::IMREAD_COLOR);
+  //cv::Mat image = cv::imread(path2, cv::IMREAD_COLOR);
 
-  od.detectObjects(image);
+  //od.detectObjects(image);
 
 
 }

@@ -6,8 +6,6 @@
 //  Copyright © 2018 Iván Canales Martín. All rights reserved.
 //
 
-#include "task1.h"
-#include "task2.h"
 #include "task3.h"
 
 int main(int argc, const char * argv[]) {
