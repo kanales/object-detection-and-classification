@@ -5,6 +5,7 @@
 
 #include "RandomForest.hpp"
 #include "ObjectDetector.h"
+#include "DataLoader.h"
 
 cv::String newPath( $ROOT "data/task3/train_new/0" );
 
@@ -67,14 +68,17 @@ void part3(int argc, const char *argv[]) {
   // std::cout << "Augmenting..." << std::endl;
   // data_augmentation(path);
 
+  int n_classes = 4;
   int ntrees  = 20;
-  int nsample = RandomForest::ALL_SAMPLES;
+  int nsample = 500;//RandomForest::ALL_SAMPLES;
 
   cv::HOGDescriptor hog = mk_hog();
-  RandomForest rf(ntrees,nsample, hog, 4);
+  RandomForest rf(ntrees,nsample, hog, n_classes);
 
+  DataLoader dl;
   std::cout << "Training forest..." << std::endl;
-  auto [feats, labels]  = rf.load_train(path);
+
+  auto [feats, labels]  = dl.load(path,n_classes, hog); //rf.load_train(path);
   rf.train(feats, labels);
   std::cout << "Done training." << std::endl;
 

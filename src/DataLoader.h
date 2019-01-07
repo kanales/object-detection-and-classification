@@ -6,8 +6,12 @@
 #define OBJECT_DETECTION_AND_CLASSIFICATION_DATALOADER_H
 
 
-class DataLoader {
+#include <opencv2/core/mat.hpp>
+#include <opencv/cv.hpp>
 
+class DataLoader {
+public:
+    std::tuple<cv::Mat, cv::Mat> load(cv::String path, int nClasses, cv::HOGDescriptor &hog);
 };
 
 

@@ -25,7 +25,6 @@ public:
     cv::HOGDescriptor hog;
     static const int ALL_SAMPLES = -1;
 
-    std::tuple<cv::Mat, cv::Mat> load_train(cv::String train_path);
     RandomForest(int n, int samples, cv::HOGDescriptor& hog, int mc, int f=0, int md=100, int ms=100);
 
     // putting the right training data and the train path can be chosen before (we use it multiple times) (we have to do it differently)
