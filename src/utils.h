@@ -23,7 +23,7 @@ std::vector<int> randomvec(int range_min, int range_max, int n);
 void printmat(cv::Mat M);
 template <class T>
 void print_vector(std::vector<T> v);
-void read_directory(const std::string& name, stringvec& v);
+std::vector<std::string> read_directory(const std::string& name);
 void print_vector(const std::vector<float> &vec);
 
 #endif

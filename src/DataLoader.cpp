@@ -6,21 +6,33 @@
 #include "utils.h"
 #include "task1.h"
 
+void DataLoader::addPath(cv::String path, int label) {
+    this->paths.push_back(path);
+    this->labels.push_back(label);
+}
+
 std::tuple<cv::Mat, cv::Mat> DataLoader::load(cv::String train_path, int nClasses, cv::HOGDescriptor &hog) {
     // LOAD DATASET
-    std::vector<std::string> v;
     cv::Mat trainLabel;
     // taking images name
     for (int lab = 0; lab < nClasses ; lab++) {
         cv::String path(train_path + std::to_string(lab) + "/");
-        std::vector<std::string> v2;
-        read_directory(path, v2);
+        this->labels.push_back(lab);
+        this->paths.push_back(path);
+    }
+
+    std::vector<std::string> v;
+    std::vector<std::string> v2;
+
+    for (int i = 0; i < paths.size(); i++) {
+        v2 = read_directory(paths[i]);
         v.insert(v.end(), v2.begin(), v2.end());
-        // index vector
         for (size_t j = 0; j < v2.size(); j++) {
-            trainLabel.push_back(lab);
+            trainLabel.push_back(labels[i]);
         }
     }
+
+
     cv::Mat trainData((int)v.size(),(int)hog.getDescriptorSize(),CV_32F);
     // converting in Mat
     cv::Mat image, editedImage, grayImg;

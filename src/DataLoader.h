@@ -10,7 +10,10 @@
 #include <opencv/cv.hpp>
 
 class DataLoader {
+    std::vector<int> labels;
+    std::vector<cv::String> paths;
 public:
+    void addPath(cv::String path, int label);
     std::tuple<cv::Mat, cv::Mat> load(cv::String path, int nClasses, cv::HOGDescriptor &hog);
 };
 

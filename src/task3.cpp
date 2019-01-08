@@ -46,7 +46,7 @@ void data_augmentation(cv::String train_path) {
     std::vector<std::string> v;
     cv::String string_lab(std::to_string(lab));
     cv::String path( train_path + string_lab + "/" );
-    read_directory(path, v);
+    v = read_directory(path);
     for (auto &img : v) {
         image_flip(img,string_lab);
         for (int i = 0; i < 360; i+=90) {

@@ -31,8 +31,9 @@ void print_vector(std::vector<T> v) {
 }
 
 
-void read_directory(const std::string& name, stringvec& v)
+std::vector<std::string> read_directory(const std::string& name)
 {
+    std::vector<std::string> v;
     DIR* dirp = opendir(name.c_str());
     struct dirent * dp;
     while ((dp = readdir(dirp)) != NULL) {
@@ -41,6 +42,7 @@ void read_directory(const std::string& name, stringvec& v)
     closedir(dirp);
     v.erase(std::remove(v.begin(), v.end(), name + "."), v.end());
     v.erase(std::remove(v.begin(), v.end(), name + ".."), v.end());
+    return v;
 }
 
 void print_vector(const std::vector<float> &vec) {

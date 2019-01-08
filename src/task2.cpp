@@ -3,12 +3,13 @@
 //
 
 #include "task2.h"
+#include "DataLoader.h"
 
 std::vector<cv::Mat> load_test(cv::String test_path, char val) {
     cv::Mat image;
     std::vector<std::string> v;
     cv::String path2(test_path + "0" + val + "/");
-    read_directory(path2, v);
+    v = read_directory(path2);
     std::vector<cv::Mat> out(v.size());
     int idx = 0;
     for (auto &s: v) {
@@ -32,7 +33,8 @@ void part2(int argc, const char *argv[]) {
     RandomForest rf(ntrees,nsample, hog, 6);
 
     std::cout << "Training forest..." << std::endl;
-    auto [feats, labels]  = rf.load_train(path);
+    DataLoader dl;
+    auto [feats, labels]  = dl.load(path,6,hog);
     rf.train(feats, labels);
     std::cout << "Done training." << std::endl;
 
