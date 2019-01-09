@@ -6,8 +6,8 @@
 #define OBJECT_DETECTION_AND_CLASSIFICATION_DATALOADER_H
 
 
-#include <opencv2/core/mat.hpp>
-#include <opencv/cv.hpp>
+//#include <opencv2/core/mat.hpp>
+#include <opencv2/opencv.hpp>
 
 class DataLoader {
     std::vector<int> labels;

@@ -7,7 +7,93 @@
 #include "ObjectDetector.h"
 #include "DataLoader.h"
 
+#include <fstream>
+
+
 cv::String newPath( $ROOT "data/task3/train_new/0" );
+
+void load_gt(std::vector<std::vector<DetectedObject>>& gts) {
+
+  cv::String path( $ROOT "data/task3/gt/" );
+
+  std::vector<std::string> v;
+  v = read_directory(path);
+
+  for (auto &nameimg : v) {
+
+    cv::String index = nameimg;
+    index = index.substr(index.size()-9);
+    index = index.substr(0,index.size()-7);
+
+    std::string line;
+    std::ifstream myfile (nameimg);
+
+    if (myfile.is_open())
+    {
+      std::vector<DetectedObject> v;
+
+      while ( getline (myfile,line) )
+      {
+        //split
+        std::istringstream buf(line);
+        std::istream_iterator<std::string> beg(buf), end;
+        std::vector<std::string> tokens(beg, end);
+
+        DetectedObject obj {
+                std::stoi(tokens[0]),
+                cv::Rect(std::stoi(tokens[1]), std::stoi(tokens[2]), std::stoi(tokens[3])- std::stoi(tokens[1]), std::stoi(tokens[4])-std::stoi(tokens[2])),
+                1
+        };
+
+        v.push_back(obj);
+      }
+      myfile.close();
+      //gts.push_back(v);
+      gts[std::stoi(index)] = v;
+      v.clear();
+    }
+  }
+}
+
+
+void evaluate(std::vector<std::vector<DetectedObject>>& gts, int index, std::vector<DetectedObject>& objs, float thr, cv::Mat image){
+
+  /*
+  cv::String index = imagePath.substr(imagePath.size()-6);
+  index = index.substr(0,index.size()-4);
+  std::cout << std::stoi(index) << '\n';
+  */
+
+  int correct = 0;
+
+/*
+  cv::rectangle(image, gts[index][0].rect, cv::Scalar(6,57,113));
+  cv::rectangle(image, gts[index][1].rect, cv::Scalar(6,57,113));
+  cv::rectangle(image, gts[index][2].rect, cv::Scalar(6,57,113));
+  cv::imshow("Image", image);
+  cv::waitKey();
+*/
+  for(int i = 0; i< objs.size() ; i++){
+
+    int cls = objs[i].cls;
+    DetectedObject gt = gts[index][cls];
+
+    std::cout << ((float)(gt.rect & objs[i].rect).area() / (gt.rect | objs[i].rect).area()) << '\n';
+    if( ((float)(gt.rect & objs[i].rect).area() / (gt.rect | objs[i].rect).area()) > thr){
+      std::cout << "thr" << '\n';
+      correct++;
+    }
+  }
+
+  if (correct == 0 )
+    std::cout << "bad, no object found" << '\n';
+  else{
+    std::cout << "Precision = " << (float)correct/objs.size() << '\n';
+    std::cout << "Recall = " << (float)correct/3 << '\n';
+  }
+
+}
+
 
 void image_rotation(cv::String imagePath, int angle, const cv::String &lab){
 
@@ -57,19 +143,18 @@ void data_augmentation(cv::String train_path) {
 }
 
 
-
-
 // execute task 3
 void part3(int argc, const char *argv[]) {
   // cv::String path( $ROOT "data/task3/train/0" );
   cv::String path( $ROOT "data/task3/train/0" );
   cv::String path2( $ROOT "data/task3/test/0000.jpg" );
+  int imageIndex = 0;
 
-  // std::cout << "Augmenting..." << std::endl;
-  // data_augmentation(path);
+   //std::cout << "Augmenting..." << std::endl;
+   //data_augmentation(path);
 
   int n_classes = 4;
-  int ntrees  = 20;
+  int ntrees  = 20; //20
   int nsample = 500;//RandomForest::ALL_SAMPLES;
 
   cv::HOGDescriptor hog = mk_hog();
@@ -79,6 +164,7 @@ void part3(int argc, const char *argv[]) {
   std::cout << "Training forest..." << std::endl;
 
   auto [feats, labels]  = dl.load(path,n_classes, hog); //rf.load_train(path);
+
   rf.train(feats, labels);
   std::cout << "Done training." << std::endl;
 
@@ -98,4 +184,14 @@ void part3(int argc, const char *argv[]) {
   }
   cv::imshow("Image", image);
   cv::waitKey();
+
+  std::cout << "Evaluating ..." << '\n';
+  std::vector<std::vector<DetectedObject>> gts (44);
+  load_gt(gts);
+//  std::cout << "gts size" << gts.size() << '\n';
+  float thr = 0.5;
+  evaluate(gts, imageIndex, objs, thr, image);
+
+  // TODO: change the thr and create the precision-recall chart
+
 }

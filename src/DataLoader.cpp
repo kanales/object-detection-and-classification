@@ -11,7 +11,7 @@ void DataLoader::addPath(cv::String path, int label) {
     this->labels.push_back(label);
 }
 
-std::tuple<cv::Mat, cv::Mat> DataLoader::load(cv::String train_path, int nClasses, cv::HOGDescriptor &hog) {
+std::tuple<cv::Mat, cv::Mat> DataLoader::load(cv::String train_path, int nClasses, cv::HOGDescriptor& hog) {
     // LOAD DATASET
     cv::Mat trainLabel;
     // taking images name
@@ -25,7 +25,7 @@ std::tuple<cv::Mat, cv::Mat> DataLoader::load(cv::String train_path, int nClasse
     std::vector<std::string> v2;
 
     for (int i = 0; i < paths.size(); i++) {
-        v2 = read_directory(paths[i]);
+        v2 = read_directory(this->paths[i]);
         v.insert(v.end(), v2.begin(), v2.end());
         for (size_t j = 0; j < v2.size(); j++) {
             trainLabel.push_back(labels[i]);
