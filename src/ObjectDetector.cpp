@@ -50,7 +50,7 @@ std::tuple<Class, float> ObjectDetector::detectClass(cv::Rect rect, cv::Mat img)
     float probBG = preds[nothingClass];
     float confidence = preds[c];
     // in case of doubt...
-    if(confidence < 0.7)
+    if(confidence < 0.6)
       return {nothingClass, bgCutoff};
 
     return {c, confidence};

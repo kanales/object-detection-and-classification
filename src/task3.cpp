@@ -10,7 +10,7 @@
 #include <fstream>
 
 
-cv::String newPath( $ROOT "data/task3/train_new/0" );
+cv::String newPath( $ROOT "data/task3/train/0" );
 
 void load_gt(std::vector<std::vector<DetectedObject>>& gts) {
 
@@ -150,8 +150,8 @@ void part3(int argc, const char *argv[]) {
   cv::String path2( $ROOT "data/task3/test/0000.jpg" );
   int imageIndex = 0;
 
-   //std::cout << "Augmenting..." << std::endl;
-   //data_augmentation(path);
+   // std::cout << "Augmenting..." << std::endl;
+   // data_augmentation(path);
 
   int n_classes = 4;
   int ntrees  = 20; //20
