@@ -30,6 +30,8 @@ public:
     std::vector<float> predict(cv::Mat sample);
     std::vector<float> predictImage(cv::Mat images);
 
+    void save(std::string path);
+    void load(std::string path);
 };
 
 #endif

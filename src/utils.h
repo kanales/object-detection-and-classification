@@ -11,8 +11,6 @@
 #include <algorithm>
 #include <iterator>
 
-#define CELL_SIZE 16
-#define NBINS 9
 #define WIN_SIZE 128
 
 typedef std::vector<std::string> stringvec;

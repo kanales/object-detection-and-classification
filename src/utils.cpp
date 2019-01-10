@@ -4,6 +4,9 @@
 
 #include "utils.h"
 
+#define CELL_SIZE 8
+#define NBINS 9
+
 std::vector<int> randomvec(int range_min, int range_max, int n){
     std::random_device rd; // seed for PRNG
     std::mt19937 mt_eng(rd()); // mersenne-twister engine initialised with seed
@@ -55,9 +58,9 @@ void print_vector(const std::vector<float> &vec) {
 cv::HOGDescriptor mk_hog() {
     cv::HOGDescriptor hog;
     hog.winSize = cv::Size(WIN_SIZE,WIN_SIZE);
-    hog.blockSize = cv::Size(2*CELL_SIZE,2*CELL_SIZE);
-    hog.blockStride = cv::Size(CELL_SIZE,CELL_SIZE);
-    hog.cellSize = cv::Size(CELL_SIZE,CELL_SIZE);
-    hog.nbins = NBINS;
+    hog.blockSize = cv::Size(16,16);
+    hog.blockStride = cv::Size(4,4);
+    hog.cellSize = cv::Size(16,16);
+    hog.nbins = 9;
     return hog;
 }

@@ -142,12 +142,15 @@ void data_augmentation(cv::String train_path) {
   }
 }
 
+cv::Scalar class_color[] = {cv::Scalar(0,0,255), cv::Scalar(0,255,0), cv::Scalar(255,0,0)};
 
 // execute task 3
 void part3(int argc, const char *argv[]) {
   // cv::String path( $ROOT "data/task3/train/0" );
   cv::String path( $ROOT "data/task3/train/0" );
   cv::String path2( $ROOT "data/task3/test/0000.jpg" );
+  cv::String model_dir( $ROOT "model/" );
+  bool renewing_data = 0;
   int imageIndex = 0;
 
    // std::cout << "Augmenting..." << std::endl;
@@ -163,9 +166,15 @@ void part3(int argc, const char *argv[]) {
   DataLoader dl;
   std::cout << "Training forest..." << std::endl;
 
-  auto [feats, labels]  = dl.load(path,n_classes, hog); //rf.load_train(path);
+  if (renewing_data) {
+    auto [feats, labels]  = dl.load(path,n_classes, hog); //rf.load_train(path);
+    rf.train(feats, labels);
+    rf.save(model_dir);
+  } else {
+    rf.load(model_dir);
+  }
 
-  rf.train(feats, labels);
+  //rf.save(model_dir);
   std::cout << "Done training." << std::endl;
 
   ObjectDetector od(rf, 3);
@@ -179,7 +188,7 @@ void part3(int argc, const char *argv[]) {
   }
 
   for (DetectedObject v: objs) {
-    cv::rectangle(image, v.rect, cv::Scalar(0,0,255));
+    cv::rectangle(image, v.rect, class_color[v.cls]);
 
   }
   cv::imshow("Image", image);
