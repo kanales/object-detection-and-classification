@@ -6,12 +6,8 @@
 //  Copyright © 2018 Iván Canales Martín. All rights reserved.
 //
 
+#include "task1.h"
 #include "task3.h"
-
-struct S {
-    int a;
-    int b;
-};
 
 int main(int argc, const char * argv[]) {
     //part1(argc, argv);

@@ -32,7 +32,7 @@ class ObjectDetector {
     float bgCutoff;
     cv::Size winSize;
 public:
-    ObjectDetector(RandomForest &rf, Class backgroundClass, int windowStride = 5, float bgCutoff = 0.70);
+    ObjectDetector(RandomForest &rf, Class backgroundClass, int windowStride = 5, float bgCutoff = 0.5);
     std::vector<cv::Rect> generateWindows(cv::Mat image, cv::Size winSize);
     std::tuple<Class, float> detectClass(cv::Rect rect, cv::Mat img);
     std::vector<DetectedObject> nonMaximaSupression(std::vector<DetectedObject> &objs);

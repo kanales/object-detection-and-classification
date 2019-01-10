@@ -10,10 +10,13 @@
 //  Copyright © 2019 Iván Canales Martín. All rights reserved.
 //
 //#include "RandomForest.hpp"
+#include <regex>
 #include "utils.h"
 #include "task1.h"
 #include "RandomForest.hpp"
 #include "DataLoader.h"
+
+namespace ml = cv::ml;
 
 RandomForest::RandomForest(int n, int samples, cv::HOGDescriptor& hog, int mc, int f, int md, int ms) {
     TreePtr tree;
@@ -94,4 +97,26 @@ cv::Mat RandomForest::imageToSample(cv::Mat images) {
 
 std::vector<float> RandomForest::predictImage(cv::Mat images) {
     return predict(imageToSample(images));
+}
+
+void RandomForest::save(std::string path) {
+    std::ostringstream stream;
+    int counter = 0;
+    for (auto tree: dtrees) {
+        stream.flush();
+        stream << path << "tree_" << counter++ << ".RandomForest";
+        tree->save(stream.str());
+    }
+}
+
+void RandomForest::load(std::string path) {
+    std::vector<std::string> names = read_directory(path);
+    std::regex r(".*tree_[[:digit:]]+\\.RandomForest$");
+    this->dtrees.clear();
+    for (std::string name: names) {
+        if (std::regex_match(name, r)) {
+            dtrees.push_back(ml::DTrees::load(name));
+        }
+    }
+
 }
