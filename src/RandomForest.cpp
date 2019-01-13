@@ -11,6 +11,7 @@
 //
 //#include "RandomForest.hpp"
 #include <regex>
+#include <numeric>
 #include "utils.h"
 #include "task1.h"
 #include "RandomForest.hpp"
@@ -18,7 +19,7 @@
 
 namespace ml = cv::ml;
 
-RandomForest::RandomForest(int n, int samples, cv::HOGDescriptor& hog, int mc, int f, int md, int ms) {
+RandomForest::RandomForest(int n, int samples, cv::HOGDescriptor &hog, int mc, int md, int ms, int f) {
     TreePtr tree;
     this->numTrees = n;
     for (int i = 0; i < this->numTrees; i++)
@@ -61,15 +62,16 @@ void RandomForest::train(cv::Mat &train_features, cv::Mat &train_label) {
 std::vector<float> RandomForest::predict(cv::Mat descriptor) {
     // create_test(test_path);
     cv::Mat f = descriptor.reshape(1,1);
-    f.convertTo(f, CV_32F);
 
     std::vector<int> classes(this->nClasses);
     // predictions contains all the predictions, for each tree(row) for each sample(col)
 
     std::fill(classes.begin(),classes.end(),0);
-
+    float p;
+    cv::Mat res;
     for (auto tree: this->dtrees) {
-        classes[tree->predict(f)]++;
+        p = tree->predict(f);
+        classes[p]++;
     }
 
     std::vector<float> out(this->nClasses);
@@ -85,25 +87,24 @@ std::vector<float> RandomForest::predict(cv::Mat descriptor) {
     return out;
 }
 
-cv::Mat RandomForest::imageToSample(cv::Mat images) {
+std::vector<float> RandomForest::predictImage(cv::Mat images) {
     cv::Mat editedImage, grayImage, m;
     std::vector<float> descriptor;
 
-    cv::resize(images, editedImage, cv::Size(128,128));
-    //cv::cvtColor(editedImage, grayImage, cv::COLOR_RGB2GRAY);
-    this->hog.compute(editedImage,descriptor);
-    return cv::Mat(descriptor);
-}
+    cv::resize(images, editedImage, cv::Size(WIN_SIZE, WIN_SIZE));
+    cv::cvtColor(editedImage, grayImage, cv::COLOR_RGB2GRAY);
 
-std::vector<float> RandomForest::predictImage(cv::Mat images) {
-    return predict(imageToSample(images));
+    this->hog.compute(editedImage, descriptor);
+
+    cv::Mat s = cv::Mat(descriptor);
+    return predict(s);
 }
 
 void RandomForest::save(std::string path) {
     std::ostringstream stream;
     int counter = 0;
     for (auto tree: dtrees) {
-        stream.flush();
+        stream.str(std::string());
         stream << path << "tree_" << counter++ << ".RandomForest";
         tree->save(stream.str());
     }
@@ -114,6 +115,7 @@ void RandomForest::load(std::string path) {
     std::regex r(".*tree_[[:digit:]]+\\.RandomForest$");
     this->dtrees.clear();
     for (std::string name: names) {
+
         if (std::regex_match(name, r)) {
             dtrees.push_back(ml::DTrees::load(name));
         }
