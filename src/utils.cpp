@@ -55,12 +55,13 @@ void print_vector(const std::vector<float> &vec) {
 }
 
 // building a fixed HOG descriptor
-cv::HOGDescriptor mk_hog() {
+cv::HOGDescriptor mk_hog(int cellSize, int nbins, int winSize, int blockSize, int cellStride, bool signedGradient) {
     cv::HOGDescriptor hog;
-    hog.winSize = cv::Size(WIN_SIZE,WIN_SIZE);
-    hog.blockSize = cv::Size(16,16);
-    hog.blockStride = cv::Size(4,4);
-    hog.cellSize = cv::Size(16,16);
-    hog.nbins = 9;
+    hog.winSize = cv::Size(winSize,winSize);
+    hog.blockSize = cv::Size(blockSize,blockSize);
+    hog.blockStride = cv::Size(cellStride,cellStride);
+    hog.cellSize = cv::Size(cellSize,cellSize);
+    hog.signedGradient = signedGradient;
+    hog.nbins = nbins;
     return hog;
 }

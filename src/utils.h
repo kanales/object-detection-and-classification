@@ -11,12 +11,13 @@
 #include <algorithm>
 #include <iterator>
 
-#define WIN_SIZE 128
+#define WIN_SIZE 96
 
 typedef std::vector<std::string> stringvec;
 
 // building a fixed HOG descriptor
-cv::HOGDescriptor mk_hog();
+cv::HOGDescriptor mk_hog(int cellSize = 12, int nbins = 9, int winSize = WIN_SIZE, int blockSize = 24,
+        int cellStride = 12, bool signedGradient = false);
 std::vector<int> randomvec(int range_min, int range_max, int n);
 void printmat(cv::Mat M);
 template <class T>

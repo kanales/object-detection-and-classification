@@ -29,11 +29,14 @@ class ObjectDetector {
     int windowStride;
     Class nothingClass;
     RandomForest &rf;
-    float bgCutoff;
     cv::Size winSize;
 public:
-    ObjectDetector(RandomForest &rf, Class backgroundClass, int windowStride = 5, float bgCutoff = 0.5);
-    std::vector<cv::Rect> generateWindows(cv::Mat image, cv::Size winSize);
+    float bgCutoff;
+    float overlap_thr;
+    ObjectDetector(RandomForest &rf, Class backgroundClass, int windowStride = 5, float bgCutoff = 0.60,
+                       float overlap_thr = 0);
+    std::vector<cv::Rect>
+    generateWindows(cv::Mat image, cv::Size minWinSize, cv::Size maxWinSize, int steps);
     std::tuple<Class, float> detectClass(cv::Rect rect, cv::Mat img);
     std::vector<DetectedObject> nonMaximaSupression(std::vector<DetectedObject> &objs);
     // Returns a list of

@@ -19,18 +19,18 @@ std::vector<cv::Mat> load_test(cv::String test_path, char val) {
 }
 
 // execute task 2
-void part2(int argc, const char *argv[]) {
+float part2(int param) {
     cv::String path( $ROOT "data/task2/train/0" );
 
     cv::String path2( $ROOT "data/task2/test/" );
     //cv::String path2( $ROOT "data/task2/train/" );
 
 
-    int ntrees  = 20;
+    int ntrees  = 10;
     int nsample = 500;//RandomForest::ALL_SAMPLES;
 
     cv::HOGDescriptor hog = mk_hog();
-    RandomForest rf(ntrees,nsample, hog, 6);
+    RandomForest rf(ntrees, nsample, hog, 6, param, 100, 0);
 
     std::cout << "Training forest..." << std::endl;
     DataLoader dl;
@@ -55,5 +55,7 @@ void part2(int argc, const char *argv[]) {
             if (j == k) correct++;
         }
     }
-    std::cout << "Accuracy: " << ((float)correct) / total << '%' << std::endl;
+    float acc = ((float)correct) / total;
+    std::cout << "Accuracy: " << acc << '%' << std::endl;
+    return acc;
 }

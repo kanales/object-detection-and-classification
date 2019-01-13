@@ -14,6 +14,6 @@ typedef int Class;
 std::vector<cv::Mat> load_test(cv::String test_path, char val);
 
 // execute task 2
-void part2(int argc, const char *argv[]);
+float part2(int param);
 
 #endif

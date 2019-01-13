@@ -8,30 +8,39 @@
 #include "utils.h"
 
 // controlClass determines which class will be considered as background and therefore ignored for detection purposes
-ObjectDetector::ObjectDetector(RandomForest &rf, Class backgroundClass, int windowStride, float bgCutoff)
+ObjectDetector::ObjectDetector(RandomForest &rf, Class backgroundClass, int windowStride, float bgCutoff, float overlap_thr)
         : rf(rf) {
     this->rf = rf;
     this->nothingClass = backgroundClass;
     this->windowStride = windowStride;
     this->bgCutoff = bgCutoff;
     this->winSize = rf.hog.winSize;
+    this->overlap_thr = overlap_thr;
 }
 
 // Update so it uses changes in scale?
 std::vector<cv::Rect>
-ObjectDetector::generateWindows(cv::Mat image, cv::Size winSize) {
+ObjectDetector::generateWindows(cv::Mat image, cv::Size minWinSize, cv::Size maxWinSize, int steps) {
     std::vector<cv::Rect> out;
 
     // sliding window size
     //int windows_rows = 20;
     //int windows_cols = 20;
-    for (int col = 0; col <= image.cols - winSize.width; col += windowStride){
-        for (int row = 0; row <= image.rows - winSize.height; row += windowStride){
-            cv::Rect window({col, row}, winSize);
-            out.push_back(window);
-            //  cv::Mat window_image = cv::Mat(image,window); // window content in Mat format
+    float hfactor = (maxWinSize.height - minWinSize.height) / (float)steps;
+    float wfactor = (maxWinSize.height - minWinSize.height) / (float)steps;
+    cv::Size winSize = minWinSize;
+    for (int i = 0; i < steps; i++) {
+        winSize.height += hfactor;
+        winSize.width  += wfactor;
+        for (int col = 0; col <= image.cols - winSize.width; col += windowStride){
+            for (int row = 0; row <= image.rows - winSize.height; row += windowStride){
+                cv::Rect window({col, row}, winSize);
+                out.push_back(window);
+                //  cv::Mat window_image = cv::Mat(image,window); // window content in Mat format
+            }
         }
     }
+
     //winSize = {(int) std::ceil(winSize.width * scaleFactor), (int) std::ceil(winSize.height*scaleFactor)};
 
 
@@ -41,40 +50,41 @@ ObjectDetector::generateWindows(cv::Mat image, cv::Size winSize) {
 
 
 std::tuple<Class, float> ObjectDetector::detectClass(cv::Rect rect, cv::Mat img) {
-
     //TODO test this
     // cv::Mat subimg = cv::Mat(img,rect);
     cv::Mat subimg = img(rect);
     std::vector<float> preds = this->rf.predictImage(subimg);
-    int c = (int) std::distance(preds.begin(), std::max_element(preds.begin(),preds.end()));
-    float probBG = preds[nothingClass];
-    float confidence = preds[c];
+    //int c = (int) std::distance(preds.begin(), std::max_element(preds.begin(),preds.end()));
+    int maxi = this->nothingClass;
+    float max = 0;
+    for (int i = 0; i < preds.size(); i++) {
+        if (preds[i] > max) {
+            maxi = i;
+            max  = preds[i];
+        }
+    }
+    float confidence = preds[maxi];
     // in case of doubt...
     if(confidence < bgCutoff)
         return {nothingClass, bgCutoff};
-    return {c, confidence};
+    return {maxi, confidence};
 }
 
 std::vector<DetectedObject> ObjectDetector::detectObjects(cv::Mat image) {
 
-    std::vector<cv::Rect> windows = this->generateWindows(image, rf.hog.winSize); // 1:1 window size
-
+    std::vector<cv::Rect> windows = this->generateWindows(image, cv::Size(50,50), cv::Size(150,150), 10); // 1:1 window size
     int countBack = 0;
     int countObj = 0;
 
     // filter out background
     std::vector<DetectedObject> objs;
 
-
     for (const auto &win: windows) {
         auto [cls, confidence] = detectClass(win, image);
-
         if(cls==nothingClass)
           countBack++;
         else
           countObj++;
-
-
         if (cls != nothingClass) {
 
             DetectedObject obj {
@@ -103,13 +113,12 @@ std::vector<DetectedObject> ObjectDetector::nonMaximaSupression(std::vector<Dete
     auto begin = objs.begin();
     while (begin != end) {
         DetectedObject o = *begin; // get element with most confidence
-        std::cout << o.cls;
         out.push_back(o);
-        end = std::remove_if(begin, end, [&o] (DetectedObject el) {
+        end = std::remove_if(begin, end, [this,&o] (DetectedObject el) {
             //todo adjust threshold
-            float thr = 0.25; // For now delete if intersects and
-            float ratio = (float)(el.rect & o.rect).area() / (el.rect | o.rect).area();
-            return (el.cls == o.cls) && (ratio > thr);
+            float thr = this->overlap_thr; // For now delete if intersects and
+            float ratio = (el.rect & o.rect).area() / (float)(el.rect | o.rect).area();
+            return o.cls == el.cls; //(ratio > thr);
         });
     }
     return out;

@@ -41,8 +41,8 @@ std::tuple<cv::Mat, cv::Mat> DataLoader::load(cv::String train_path, int nClasse
     for (auto &i : v) {
         image = cv::imread(i, cv::IMREAD_COLOR);
 
-        cv::resize(image, editedImage, cv::Size(128,128)); // Check later if it's correct!
-        //cv::cvtColor(editedImage, grayImg, cv::COLOR_RGB2GRAY);
+        cv::resize(image, editedImage, cv::Size(WIN_SIZE,WIN_SIZE)); // Check later if it's correct!
+        cv::cvtColor(editedImage, grayImg, cv::COLOR_RGB2GRAY);
 
         hog.compute(editedImage,descriptor);
 

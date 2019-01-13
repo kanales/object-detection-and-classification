@@ -15,6 +15,8 @@ void image_flip(cv::String imagePath);
 void data_augmentation(cv::String train_path);
 
 // execute task 3
-void part3(int argc, const char *argv[]);
+void part3(bool retrain, float object_thr, float overlapthr);
+
+void test();
 
 #endif

@@ -7,10 +7,32 @@
 //
 
 #include "task1.h"
+#include "task2.h"
 #include "task3.h"
 
 int main(int argc, const char * argv[]) {
-    //part1(argc, argv);
-    //part2(argc, argv);
-    part3(argc, argv);
+    /*
+    for (int i = 0; i < 3; i++) {
+        part1(i);
+    }
+
+    float max = 0;
+    int maxi = 0;
+    for (int i = 10; i < 100; i += 5) {
+        float acc = part2(i);
+        std::cout << i << " > " << acc << std::endl;
+        if (acc > max) {
+            max = acc;
+            maxi = i;
+        }
+    }
+
+
+
+    std::cout << maxi << ": acc " << max << std::endl;
+     */
+    ///*
+    //part1(0);
+    part3(false, 0, 0);
+    //*/
 }
