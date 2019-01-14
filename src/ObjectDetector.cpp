@@ -6,6 +6,7 @@
 
 #include "ObjectDetector.h"
 #include "utils.h"
+#include "config.h"
 
 // controlClass determines which class will be considered as background and therefore ignored for detection purposes
 ObjectDetector::ObjectDetector(RandomForest &rf, Class backgroundClass, int windowStride, float bgCutoff, float overlap_thr)
@@ -49,10 +50,12 @@ ObjectDetector::generateWindows(cv::Mat image, cv::Size minWinSize, cv::Size max
 
 
 
-std::tuple<Class, float> ObjectDetector::detectClass(cv::Rect rect, cv::Mat img) {
+std::tuple<Class, float> ObjectDetector::detectClass(cv::Rect rect, cv::Mat img, float cutoff) {
     //TODO test this
     // cv::Mat subimg = cv::Mat(img,rect);
-    cv::Mat subimg = img(rect);
+    cv::Mat imagebw, subimg;
+    cv::cvtColor(img, imagebw, cv::COLOR_RGB2GRAY);
+    cv::resize(imagebw(rect), subimg, this->winSize);
     std::vector<float> preds = this->rf.predictImage(subimg);
     //int c = (int) std::distance(preds.begin(), std::max_element(preds.begin(),preds.end()));
     int maxi = this->nothingClass;
@@ -65,22 +68,57 @@ std::tuple<Class, float> ObjectDetector::detectClass(cv::Rect rect, cv::Mat img)
     }
     float confidence = preds[maxi];
     // in case of doubt...
-    if(confidence < bgCutoff)
-        return {nothingClass, bgCutoff};
+    if(confidence < cutoff)
+        return {nothingClass, cutoff};
     return {maxi, confidence};
 }
 
-std::vector<DetectedObject> ObjectDetector::detectObjects(cv::Mat image) {
-
+std::vector<DetectedObject> ObjectDetector::detectAllObjects(cv::Mat image) {
+    if constexpr(DEBUG) std::cout << "Generating windows...";
     std::vector<cv::Rect> windows = this->generateWindows(image, cv::Size(50,50), cv::Size(150,150), 10); // 1:1 window size
+    if constexpr(DEBUG) std::cout << "DONE" << std::endl;
     int countBack = 0;
     int countObj = 0;
 
     // filter out background
     std::vector<DetectedObject> objs;
 
+    if constexpr(DEBUG) std::cout << "Detecting objects...";
     for (const auto &win: windows) {
-        auto [cls, confidence] = detectClass(win, image);
+        auto [cls, confidence] = detectClass(win, image, 0);
+        if(cls==nothingClass)
+            countBack++;
+        else
+            countObj++;
+        if (cls != nothingClass) {
+
+            DetectedObject obj {
+                    cls,
+                    win,
+                    confidence
+            };
+
+            objs.push_back(obj);
+        }
+    }
+    if constexpr(DEBUG) std::cout << "DONE" << std::endl;
+
+    return nonMaximaSupression(objs);
+}
+
+std::vector<DetectedObject> ObjectDetector::detectObjects(cv::Mat image) {
+    if constexpr(DEBUG) std::cout << "Generating windows...";
+    std::vector<cv::Rect> windows = this->generateWindows(image, cv::Size(50,50), cv::Size(150,150), 10); // 1:1 window size
+    if constexpr(DEBUG) std::cout << "DONE" << std::endl;
+    int countBack = 0;
+    int countObj = 0;
+
+    // filter out background
+    std::vector<DetectedObject> objs;
+
+    if constexpr(DEBUG) std::cout << "Detecting objects...";
+    for (const auto &win: windows) {
+        auto [cls, confidence] = detectClass(win, image, this->bgCutoff);
         if(cls==nothingClass)
           countBack++;
         else
@@ -96,6 +134,7 @@ std::vector<DetectedObject> ObjectDetector::detectObjects(cv::Mat image) {
             objs.push_back(obj);
         }
     }
+    if constexpr(DEBUG) std::cout << "DONE" << std::endl;
 
     return nonMaximaSupression(objs);
 }
@@ -118,7 +157,7 @@ std::vector<DetectedObject> ObjectDetector::nonMaximaSupression(std::vector<Dete
             //todo adjust threshold
             float thr = this->overlap_thr; // For now delete if intersects and
             float ratio = (el.rect & o.rect).area() / (float)(el.rect | o.rect).area();
-            return o.cls == el.cls; //(ratio > thr);
+            return (ratio > thr);
         });
     }
     return out;

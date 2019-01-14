@@ -88,13 +88,10 @@ std::vector<float> RandomForest::predict(cv::Mat descriptor) {
 }
 
 std::vector<float> RandomForest::predictImage(cv::Mat images) {
-    cv::Mat editedImage, grayImage, m;
+    //cv::Mat editedImage, grayImage, m;
     std::vector<float> descriptor;
 
-    cv::resize(images, editedImage, cv::Size(WIN_SIZE, WIN_SIZE));
-    cv::cvtColor(editedImage, grayImage, cv::COLOR_RGB2GRAY);
-
-    this->hog.compute(editedImage, descriptor);
+    this->hog.compute(images, descriptor);
 
     cv::Mat s = cv::Mat(descriptor);
     return predict(s);

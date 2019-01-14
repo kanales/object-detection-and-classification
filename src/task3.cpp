@@ -10,7 +10,7 @@
 #include <fstream>
 
 
-cv::String newPath( $ROOT "data/task3/train_new/0" );
+cv::String newPath( $ROOT "data/task3/train/0" );
 
 void load_gt(std::vector<std::vector<DetectedObject>>& gts) {
 
@@ -128,6 +128,7 @@ void image_flip(cv::String imagePath, const cv::String &lab){
 }
 
 void data_augmentation(cv::String train_path) {
+    std::cout << "Augmenting data...";
     for (int lab = 0; lab < 4; lab++) {
         std::vector<std::string> v;
         cv::String string_lab(std::to_string(lab));
@@ -148,9 +149,9 @@ cv::Scalar class_color[] = {cv::Scalar(0,0,255), cv::Scalar(0,255,0), cv::Scalar
 void part3(bool retrain, float object_thr, float overlapthr) {
     // cv::String path( $ROOT "data/task3/train/0" );
     cv::String path( $ROOT "data/task3/train/0" );
-    cv::String test_path( $ROOT "data/task3/test/0000.jpg" );
+    cv::String test_path( $ROOT "data/task3/test/0043.jpg" );
     cv::String model_dir( $ROOT "model/" );
-    int imageIndex = 0;
+    int imageIndex = 43;
 
     //std::cout << "Augmenting..." << std::endl;
     //data_augmentation(path);
@@ -173,6 +174,7 @@ void part3(bool retrain, float object_thr, float overlapthr) {
         rf.save(model_dir);
         std::cout << "Done training." << std::endl;
     } else {
+        std::cout << "Loading forest..." << std::endl;
         rf.load(model_dir);
     }
 
@@ -203,7 +205,7 @@ void part3(bool retrain, float object_thr, float overlapthr) {
     std::vector<std::vector<DetectedObject>> gts (44);
     load_gt(gts);
 
-    for (auto obj: gts[0]) {
+    for (auto obj: gts[imageIndex]) {
         cv::rectangle(image, obj.rect, cv::Scalar(0,0,0));
     }
 
