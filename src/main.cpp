@@ -33,6 +33,10 @@ int main(int argc, const char * argv[]) {
      */
     ///*
     //part1(0);
+<<<<<<< HEAD
     part3(false, 0, 0.75);
+=======
+    part3(false, 0.7, 0.25);
+>>>>>>> 07058944a1870676006336e19f4cdc92556381ca
     //*/
 }
