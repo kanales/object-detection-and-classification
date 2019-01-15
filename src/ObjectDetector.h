@@ -37,10 +37,11 @@ public:
                        float overlap_thr = 0);
     std::vector<cv::Rect>
     generateWindows(cv::Mat image, cv::Size minWinSize, cv::Size maxWinSize, int steps);
-    std::tuple<Class, float> detectClass(cv::Rect rect, cv::Mat img);
+    std::vector<DetectedObject> detectAllObjects(cv::Mat image);
+    std::tuple<Class, float> detectClass(cv::Mat &img, float cutoff);
     std::vector<DetectedObject> nonMaximaSupression(std::vector<DetectedObject> &objs);
     // Returns a list of
-    std::vector<DetectedObject> detectObjects(cv::Mat image);
+    std::vector<DetectedObject> detectObjects(cv::Mat &image, float resizeFactor, int steps);
 };
 
 #endif //OBJECT_DETECTION_AND_CLASSIFICATION_OBJECTDETECTOR_H

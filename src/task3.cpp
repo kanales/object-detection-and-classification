@@ -10,7 +10,7 @@
 #include <fstream>
 
 
-cv::String newPath( $ROOT "data/task3/train_new/0" );
+cv::String newPath( $ROOT "data/task3/train/0" );
 
 void load_gt(std::vector<std::vector<DetectedObject>>& gts) {
 
@@ -145,6 +145,7 @@ void image_flip(cv::String imagePath, const cv::String &lab){
 }
 
 void data_augmentation(cv::String train_path) {
+    std::cout << "Augmenting data...";
     for (int lab = 0; lab < 4; lab++) {
         std::vector<std::string> v;
         cv::String string_lab(std::to_string(lab));
@@ -174,12 +175,12 @@ void part3(bool retrain, float object_thr, float overlapthr) {
     //data_augmentation(path);
 
     int n_classes = 4;
-    int ntrees  = 50; //20
+    int ntrees  = 30; //20
 
     int nsample = RandomForest::ALL_SAMPLES;
 
     cv::HOGDescriptor hog = mk_hog();
-    RandomForest rf(ntrees, nsample, hog, n_classes, 50, 50, 0);
+    RandomForest rf(ntrees, nsample, hog, n_classes, 50, 100, 0);
 
     DataLoader dl;
 
@@ -191,6 +192,7 @@ void part3(bool retrain, float object_thr, float overlapthr) {
         rf.save(model_dir);
         std::cout << "Done training." << std::endl;
     } else {
+        std::cout << "Loading forest..." << std::endl;
         rf.load(model_dir);
     }
     
@@ -207,7 +209,7 @@ void part3(bool retrain, float object_thr, float overlapthr) {
 
     cv::Mat image = cv::imread(test_path, cv::IMREAD_COLOR);
 
-    std::vector<DetectedObject> objs = od.detectObjects(image);
+    std::vector<DetectedObject> objs = od.detectObjects(image, 1.3, 8);
 
     for (auto el: objs) {
         std::cout << el.confidence << ' ';
@@ -226,6 +228,7 @@ void part3(bool retrain, float object_thr, float overlapthr) {
     std::vector<std::vector<DetectedObject>> gts (44);
     load_gt(gts);
 
+<<<<<<< HEAD
       int totalcorrects = 0;
       int totalfalsepos = 0;
       int totalfalseneg = 0;
@@ -260,6 +263,10 @@ void part3(bool retrain, float object_thr, float overlapthr) {
           std::cout << "Recall = " << recall << '\n';
       }
       myfile << recall << " " << precision << std::endl;
+=======
+    for (auto obj: gts[imageIndex]) {
+        cv::rectangle(image, obj.rect, cv::Scalar(0,0,0));
+>>>>>>> bbbf2fef21a5e4ac7fb732f065fb37f76a7a8cf5
     }
     myfile.close();
 

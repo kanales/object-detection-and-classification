@@ -33,6 +33,6 @@ int main(int argc, const char * argv[]) {
      */
     ///*
     //part1(0);
-    part3(false, 0, 0);
+    part3(false, 0.7, 0.75);
     //*/
 }
