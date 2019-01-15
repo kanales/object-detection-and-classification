@@ -56,20 +56,20 @@ void load_gt(std::vector<std::vector<DetectedObject>>& gts) {
 }
 
 
-std::tuple<int, int, int> evaluate(std::vector<std::vector<DetectedObject>>& gts, int index, std::vector<DetectedObject>& objs){
+std::tuple<int, int, int> evaluate(std::vector<std::vector<DetectedObject>>& gts, int index, std::vector<DetectedObject>::iterator begin,  std::vector<DetectedObject>::iterator end){
 
     float thr = 0.5; //can be changed
-    int correct = 0;
-    int falsepos = 0;
-    int falseneg = 0;
+    float correct = 0;
+    float falsepos = 0;
+    float falseneg = 0;
 
-    for(int i = 0; i< objs.size() ; i++){
+    for( auto it = begin ; it != end ; it++){
 
-          int cls = objs[i].cls;
+          int cls = (*it).cls;
           DetectedObject gt = gts[index][cls];
 
           // std::cout << ((float)(gt.rect & objs[i].rect).area() / (gt.rect | objs[i].rect).area()) << '\n';
-          if( ((gt.rect & objs[i].rect).area() / (float)(gt.rect | objs[i].rect).area()) > thr) correct++;
+          if( ((gt.rect & (*it).rect).area() / (float)(gt.rect | (*it).rect).area()) > thr) correct++;
           else falsepos++;
     }
     falseneg += 3-std::min(3,falsepos+correct);
@@ -163,74 +163,61 @@ void part3(bool retrain, float object_thr, float overlapthr) {
         rf.load(model_dir);
     }
 
-    int precision = 0;
-    int recall = 0;
-    std::ofstream myfile;
-    myfile.open ("data.dat");
-    myfile << "#Recall Precision" << std::endl;
-    std::cout << "Evaluating ..." << '\n';
     std::vector<std::vector<DetectedObject>> gts (44);
     load_gt(gts);
+
+    float precision = 0;
+    float recall = 0;
+    std::ofstream myfile;
+    myfile.open ("data.dat");
+    myfile << "#Thr Recall Precision" << std::endl;
+    std::cout << "Evaluating ..." << '\n';
     ObjectDetector od(rf, 3);
     od.overlap_thr = overlapthr;
-    for (object_thr ; object_thr < 1; object_thr+=0.3) {
-      int totalcorrects = 0;
-      int totalfalsepos = 0;
-      int totalfalseneg = 0;
-        for (size_t img = 0; img < 45; img++) {
-          od.bgCutoff = object_thr;
+    od.bgCutoff = 0;
+    int totalcorrects = 0;
+    int totalfalsepos = 0;
+    int totalfalseneg = 0;
+    cv::String image_test_path("");
+    std::vector<float[3]> results(10);
+    for (int img = 0; img < 44; img++) {
+      if (img<10) image_test_path = cv::String(datatest_path+"0"+std::to_string(img)+".jpg");
+      else image_test_path = cv::String(datatest_path+std::to_string(img)+".jpg");
 
-          std::cout << img << '\n';
-          cv::String image_test_path;
-          if (img<10) cv::String image_test_path( datatest_path+"0"+std::to_string(img)+".jpg");
-          else cv::String image_test_path( datatest_path+std::to_string(img)+".jpg");
+      cv::Mat image_test = cv::imread(image_test_path, cv::IMREAD_COLOR);
 
-          cv::Mat image_test = cv::imread(image_test_path, cv::IMREAD_COLOR);
+      std::vector<DetectedObject> objs = od.detectObjects(image_test,1.3,8);
 
-          std::vector<DetectedObject> objs = od.detectObjects(image_test,1.3,8);
+      for (object_thr = 0 ; object_thr <= 1; object_thr+=0.1) {
+        totalcorrects = 0;
+        totalfalsepos = 0;
+        totalfalseneg = 0;
 
-          // cv::Mat image = cv::imread(test_path, cv::IMREAD_COLOR);
-          //
-          // std::vector<DetectedObject> objs = od.detectObjects(image, 1.3, 8);
+        auto end   = objs.end();
+        auto begin = objs.begin();
+        end = std::remove_if(begin, end, [object_thr] (DetectedObject el) {
+            return el.confidence < object_thr;
+        });
 
-          // for (auto el: objs) {
-          //     std::cout << el.confidence << ' ';
-          // }
-          //
-          // std::ostringstream stream;
-          // for (DetectedObject v: objs) {
-          //   cv::rectangle(image, v.rect, class_color[v.cls]);
-          //   stream.str(std::string());
-          //   stream << "cls: " << v.cls << " conf:" << v.confidence;
-          //   cv::putText(image, stream.str(), cv::Point(v.rect.x, v.rect.y), cv::FONT_HERSHEY_PLAIN, 0.75, class_color[v.cls], 1);
-          //
-          //   }
+        auto [correct,falsepos,falseneg] = evaluate(gts, img, begin, end);
 
-          //
-          // for (auto obj: gts[0]) {
-          //   cv::rectangle(image, obj.rect, cv::Scalar(0,0,0));
-          // }
-          //
-          // cv::imshow("Image", image);
-          // cv::waitKey();
-
-          auto [correct,falsepos,falseneg] = evaluate(gts, img, objs);
-          totalcorrects += correct;
-          totalfalsepos += falsepos;
-          totalfalseneg += falseneg;
-        }
-        if (totalcorrects == 0 )
-            std::cout << "bad, no object found" << '\n';
-        else
-        {
-            precision = (float)totalcorrects/(totalcorrects+totalfalsepos);
-            recall = (float)totalcorrects/(totalcorrects+totalfalseneg);
-            std::cout << "Thr = " << object_thr << '\n';
-            std::cout << "Precision = " << precision << '\n';
-            std::cout << "Recall = " << recall << '\n';
-        }
-        myfile << recall << " " << precision << std::endl;
+        int thrindex = object_thr*10;
+        results[thrindex][0] += correct;
+        results[thrindex][1] += falsepos;
+        results[thrindex][2] += falseneg;
+        // totalcorrects += correct;
+        // totalfalsepos += falsepos;
+        // totalfalseneg += falseneg;
       }
+    }
+    for (int i = 0; i < 10; i++) {
+      precision = (float)results[i][0]/(results[i][0]+results[i][1]);
+      recall = (float)results[i][0]/(results[i][0]+results[i][2]);
+      std::cout << "Thr = " << (float)i/10 << '\n';
+      std::cout << "Precision = " << precision << '\n';
+      std::cout << "Recall = " << recall << '\n';
+      myfile << (float)i/10 << " " << recall << " " << precision << std::endl;
+    }
     myfile.close();
 
     // TODO: change the thr and create the precision-recall chart
