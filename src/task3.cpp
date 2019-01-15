@@ -149,20 +149,20 @@ cv::Scalar class_color[] = {cv::Scalar(0,0,255), cv::Scalar(0,255,0), cv::Scalar
 void part3(bool retrain, float object_thr, float overlapthr) {
     // cv::String path( $ROOT "data/task3/train/0" );
     cv::String path( $ROOT "data/task3/train/0" );
-    cv::String test_path( $ROOT "data/task3/test/0043.jpg" );
+    cv::String test_path( $ROOT "data/task3/test/0000.jpg" );
     cv::String model_dir( $ROOT "model/" );
-    int imageIndex = 43;
+    int imageIndex = 0;
 
     //std::cout << "Augmenting..." << std::endl;
     //data_augmentation(path);
 
     int n_classes = 4;
-    int ntrees  = 50; //20
+    int ntrees  = 30; //20
 
     int nsample = RandomForest::ALL_SAMPLES;
 
     cv::HOGDescriptor hog = mk_hog();
-    RandomForest rf(ntrees, nsample, hog, n_classes, 50, 50, 0);
+    RandomForest rf(ntrees, nsample, hog, n_classes, 50, 100, 0);
 
     DataLoader dl;
 
@@ -184,7 +184,7 @@ void part3(bool retrain, float object_thr, float overlapthr) {
 
     cv::Mat image = cv::imread(test_path, cv::IMREAD_COLOR);
 
-    std::vector<DetectedObject> objs = od.detectObjects(image);
+    std::vector<DetectedObject> objs = od.detectObjects(image, 1.3, 8);
 
     for (auto el: objs) {
         std::cout << el.confidence << ' ';
