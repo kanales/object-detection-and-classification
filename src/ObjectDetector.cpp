@@ -180,9 +180,9 @@ std::vector<DetectedObject> ObjectDetector::nonMaximaSupression(std::vector<Dete
             //todo adjust threshold
             float thr = this->overlap_thr; // For now delete if intersects and
             int area = (el.rect & o.rect).area();
-            //float ratio = (el.rect & o.rect).area() / (float)(el.rect | o.rect).area();
-            //return (ratio > thr);
-            return (area / (float) el.rect.area()) > thr || (area / (float) o.rect.area()) > thr;
+            float ratio = area / (float)(el.rect | o.rect).area();
+            return (ratio > thr);
+            //return (area / (float) el.rect.area()) > thr || (area / (float) o.rect.area()) > thr;
         });
     }
     return std::vector<DetectedObject>(objs.begin(), end);

@@ -175,12 +175,12 @@ void part3(bool retrain, float object_thr, float overlapthr) {
     //data_augmentation(path);
 
     int n_classes = 4;
-    int ntrees  = 30; //20
+    int ntrees  = 50; //20
 
     int nsample = RandomForest::ALL_SAMPLES;
 
     cv::HOGDescriptor hog = mk_hog();
-    RandomForest rf(ntrees, nsample, hog, n_classes, 50, 100, 0);
+    RandomForest rf(ntrees, nsample, hog, n_classes, 25, 100, 0);
 
     DataLoader dl;
 
