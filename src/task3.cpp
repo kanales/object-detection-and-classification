@@ -56,7 +56,7 @@ void load_gt(std::vector<std::vector<DetectedObject>>& gts) {
 }
 
 
-void evaluate(std::vector<std::vector<DetectedObject>>& gts, int index, std::vector<DetectedObject>& objs, float thr, cv::Mat image){
+std::tuple<int, int, int> evaluate(std::vector<std::vector<DetectedObject>>& gts, int index, std::vector<DetectedObject>& objs, float thr, cv::Mat image){
 
     /*
     cv::String index = imagePath.substr(imagePath.size()-6);
@@ -65,6 +65,8 @@ void evaluate(std::vector<std::vector<DetectedObject>>& gts, int index, std::vec
     */
 
     int correct = 0;
+    int falsepos = 0;
+    int falseneg = 0;
 
 /*
   cv::rectangle(image, gts[index][0].rect, cv::Scalar(6,57,113));
@@ -73,25 +75,40 @@ void evaluate(std::vector<std::vector<DetectedObject>>& gts, int index, std::vec
   cv::imshow("Image", image);
   cv::waitKey();
 */
+
+
     for(int i = 0; i< objs.size() ; i++){
 
-        int cls = objs[i].cls;
-        DetectedObject gt = gts[index][cls];
+          int cls = objs[i].cls;
+          DetectedObject gt = gts[index][cls];
 
-        std::cout << ((float)(gt.rect & objs[i].rect).area() / (gt.rect | objs[i].rect).area()) << '\n';
-        if( ((gt.rect & objs[i].rect).area() / (float)(gt.rect | objs[i].rect).area()) > thr){
-            std::cout << "thr" << '\n';
-            correct++;
-        }
+          // std::cout << ((float)(gt.rect & objs[i].rect).area() / (gt.rect | objs[i].rect).area()) << '\n';
+          if( ((gt.rect & objs[i].rect).area() / (float)(gt.rect | objs[i].rect).area()) > thr) correct++;
+          else falsepos++;
     }
+    falseneg += 3-std::min(3,falsepos+correct);
+    // not so sure
 
-    if (correct == 0 )
-        std::cout << "bad, no object found" << '\n';
-    else{
-        std::cout << "Precision = " << (float)correct/objs.size() << '\n';
-        std::cout << "Recall = " << (float)correct/3 << '\n';
-    }
 
+  // for(int i = 0; i< objs.size() ; i++){
+  //
+  //     int cls = objs[i].cls;
+  //     DetectedObject gt = gts[index][cls];
+  //
+  //     // std::cout << ((float)(gt.rect & objs[i].rect).area() / (gt.rect | objs[i].rect).area()) << '\n';
+  //     if( ((gt.rect & objs[i].rect).area() / (float)(gt.rect | objs[i].rect).area()) > thr) correct++;
+  //     else if( ((gt.rect & objs[i].rect).area() / (float)(gt.rect | objs[i].rect).area()) < thr) falsepos++;
+  //     else falseneg++;
+  // }
+  //
+  //
+  //   if (correct == 0 )
+  //       std::cout << "bad, no object found" << '\n';
+  //   else{
+  //       std::cout << "Precision = " << (float)correct/(objs.size()+falsepos) << '\n';
+  //       std::cout << "Recall = " << (float)correct/3*gts.size() << '\n';
+  //   }
+    return {correct,falsepos,falseneg};
 }
 
 
@@ -149,8 +166,9 @@ void part3(bool retrain, float object_thr, float overlapthr) {
     // cv::String path( $ROOT "data/task3/train/0" );
     cv::String path( $ROOT "data/task3/train/0" );
     cv::String test_path( $ROOT "data/task3/test/0000.jpg" );
+    cv::String datatest_path( $ROOT "data/task3/test/000" );
     cv::String model_dir( $ROOT "model/" );
-    int imageIndex = 0;
+    // int imageIndex = 0;
 
     //std::cout << "Augmenting..." << std::endl;
     //data_augmentation(path);
@@ -175,6 +193,13 @@ void part3(bool retrain, float object_thr, float overlapthr) {
     } else {
         rf.load(model_dir);
     }
+    
+    int precision = 0;
+    int recall = 0;
+    std::ofstream myfile;
+    myfile.open ("data.dat");
+    myfile << "#Recall Precision" << std::endl;
+    for (object_thr ; object_thr < 1; object_thr+=0.9) {
 
     ObjectDetector od(rf, 3);
     od.overlap_thr = overlapthr;
@@ -197,22 +222,46 @@ void part3(bool retrain, float object_thr, float overlapthr) {
 
     }
 
-
-
     std::cout << "Evaluating ..." << '\n';
     std::vector<std::vector<DetectedObject>> gts (44);
     load_gt(gts);
 
-    for (auto obj: gts[0]) {
-        cv::rectangle(image, obj.rect, cv::Scalar(0,0,0));
+      int totalcorrects = 0;
+      int totalfalsepos = 0;
+      int totalfalseneg = 0;
+      for (size_t img = 0; img < 3; img++) {
+        std::cout << img << '\n';
+        cv::String image_test_path( datatest_path+std::to_string(img)+".jpg");
+
+        cv::Mat image_test = cv::imread(image_test_path, cv::IMREAD_COLOR);
+
+        std::vector<DetectedObject> objs = od.detectObjects(image_test);
+        //
+        // for (auto obj: gts[0]) {
+        //   cv::rectangle(image, obj.rect, cv::Scalar(0,0,0));
+        // }
+        //
+        // cv::imshow("Image", image);
+        // cv::waitKey();
+
+        float thr = 0.5;
+        auto [correct,falsepos,falseneg] = evaluate(gts, img, objs, thr, image);
+        totalcorrects += correct;
+        totalfalsepos += falsepos;
+        totalfalseneg += falseneg;
+      }
+      if (totalcorrects == 0 )
+          std::cout << "bad, no object found" << '\n';
+      else{
+          precision = (float)totalcorrects/(totalcorrects+totalfalsepos);
+          recall = (float)totalcorrects/(totalcorrects+totalfalseneg);
+          std::cout << "Thr = " << object_thr << '\n';
+          std::cout << "Precision = " << precision << '\n';
+          std::cout << "Recall = " << recall << '\n';
+      }
+      myfile << recall << " " << precision << std::endl;
     }
-
-    cv::imshow("Image", image);
-    cv::waitKey();
-
-//  std::cout << "gts size" << gts.size() << '\n';
-    float thr = 0.5;
-    evaluate(gts, imageIndex, objs, thr, image);
+    myfile.close();
 
     // TODO: change the thr and create the precision-recall chart
 
