@@ -24,6 +24,21 @@ int get_index() {
     return x;
 }
 
+
+float get_bgcutoff() {
+    float x;
+    std::cout << "Insert background discrimination threshold:" << std::endl;
+    std::cin >> x;
+    return x;
+}
+
+float get_overlapthr() {
+    float x;
+    std::cout << "Insert maximum supression threshold:" << std::endl;
+    std::cin >> x;
+    return x;
+}
+
 int main(int argc, const char * argv[]) {
     //part1(0);
     //part2(25);
@@ -35,7 +50,8 @@ int main(int argc, const char * argv[]) {
         switch (part) {
             case 1: part1(0);break;
             case 2: part2(25);break;
-            case 31: test(require_training(),get_index());break;
+            case 31:
+                test(require_training(), get_index(), get_overlapthr(), get_bgcutoff());break;
             case 32: part3(require_training(), 0, 0.75);break;
             case -1: return 0;
         }

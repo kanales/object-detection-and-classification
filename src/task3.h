@@ -17,6 +17,6 @@ void data_augmentation(cv::String train_path);
 // execute task 3
 void part3(bool retrain, float object_thr, float overlapthr);
 
-void test(bool retrain, int image_index);
+void test(bool retrain, int imageIndex, float overlap_thr, float bg_thr);
 
 #endif

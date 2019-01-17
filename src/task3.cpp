@@ -132,7 +132,7 @@ void data_augmentation(cv::String train_path) {
 
 cv::Scalar class_color[] = {cv::Scalar(0,0,255), cv::Scalar(0,255,0), cv::Scalar(255,0,0)};
 
-void test(bool retrain, int imageIndex) {
+void test(bool retrain, int imageIndex, float overlap_thr, float bg_thr) {
     // cv::String path( $ROOT "data/task3/train/0" );
     cv::String path( $ROOT "data/task3/train/0" );
     cv::String test_path( $ROOT "data/task3/test/0000.jpg" );
@@ -163,8 +163,8 @@ void test(bool retrain, int imageIndex) {
     }
 
     ObjectDetector od(rf, 3);
-    od.overlap_thr = 0.15;
-    od.bgCutoff = 0.75;
+    od.overlap_thr = overlap_thr;
+    od.bgCutoff = bg_thr;
 
     cv::Mat image = cv::imread(test_path, cv::IMREAD_COLOR);
 
