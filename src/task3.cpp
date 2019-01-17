@@ -135,7 +135,12 @@ cv::Scalar class_color[] = {cv::Scalar(0,0,255), cv::Scalar(0,255,0), cv::Scalar
 void test(bool retrain, int imageIndex, float overlap_thr, float bg_thr) {
     // cv::String path( $ROOT "data/task3/train/0" );
     cv::String path( $ROOT "data/task3/train/0" );
-    cv::String test_path( $ROOT "data/task3/test/0000.jpg" );
+
+    std::stringstream ss;
+    std::string idx = (imageIndex >= 10)?std::to_string(imageIndex):std::string("0")+std::to_string(imageIndex);
+    ss << $ROOT "data/task3/test/00" << idx << ".jpg";
+    //cv::String test_path( $ROOT "data/task3/test/0000.jpg" );
+    cv::String test_path( ss.str() );
     cv::String model_dir( $ROOT "model/" );
 
     //std::cout << "Augmenting..." << std::endl;

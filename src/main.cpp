@@ -52,7 +52,7 @@ int main(int argc, const char * argv[]) {
             case 2: part2(25);break;
             case 31:
                 test(require_training(), get_index(), get_overlapthr(), get_bgcutoff());break;
-            case 32: part3(require_training(), 0, 0.75);break;
+            case 32: part3(require_training(), 0, 0.15);break;
             case -1: return 0;
         }
     }
