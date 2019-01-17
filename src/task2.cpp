@@ -40,13 +40,15 @@ float part2(int param) {
 
     std::cout << "Predicting..." << std::endl;
 
+    cv::Mat resizedImg;
     char values[6] = {'0','1','2','3','4','5'};
     int correct = 0, total = 0;
     for (Class j = 0; j < 6; j++) {
         std::cout << "Expected " << values[j] << ": " << std::endl;
         std::vector<cv::Mat> images = load_test(path2, values[j]);
         for (auto img: images) {
-            std::vector<float> pred = rf.predictImage(img);
+            cv::resize(img,resizedImg, cv::Size(WIN_SIZE,WIN_SIZE));
+            std::vector<float> pred = rf.predictImage(resizedImg);
             int k = (int)std::distance(pred.begin(), std::max_element(pred.begin(), pred.end()));
             std::cout << "\tP: " << k << ' ';
             print_vector(pred);

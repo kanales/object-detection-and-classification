@@ -107,7 +107,7 @@ std::tuple<Class, float> ObjectDetector::detectClass(cv::Mat &img, float cutoff)
 }*/
 
 std::vector<DetectedObject> ObjectDetector::detectObjects(cv::Mat &image, float resizeFactor, int steps) {
-    if constexpr(DEBUG) std::cout << "Generating windows...";
+    if constexpr(DEBUG) std::cout << "Generating windows..." << std::endl;
     //std::vector<cv::Rect> windows = this->generateWindows(image, cv::Size(50,50), cv::Size(150,150), 10); // 1:1 window size
     cv::Mat grayImg = image;
     //cv::cvtColor(image, grayImg, CV_BGR2GRAY);
@@ -117,7 +117,7 @@ std::vector<DetectedObject> ObjectDetector::detectObjects(cv::Mat &image, float 
     cv::Mat resizedImg;
     std::vector<DetectedObject> objs;
     for (int i = 0; i < steps; i++) {
-        std::cout << i+1 <<'/'<< steps << std::endl;
+        std::cout << i+1 <<'/'<< steps << '\r' << std::flush;
         imgSize.width  = (int)std::ceil(image.cols * currFactor);
         imgSize.height = (int)std::ceil(image.rows * currFactor);
 

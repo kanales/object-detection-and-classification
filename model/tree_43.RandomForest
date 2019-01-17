@@ -12,7 +12,7 @@ opencv_ml_dtree:
       max_categories: 4
       regression_accuracy: 9.9999997764825821e-03
       max_depth: 25
-      min_sample_count: 50
+      min_sample_count: 100
       cross_validation_folds: 0
    global_var_idx: 1
    var_idx: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
@@ -520,68 +520,58 @@ opencv_ml_dtree:
          value: 3.
          norm_class_idx: 3
          splits:
-            - { var:1479, quality:1.5779522705078125e+03,
-                le:1.4819771051406860e-01 }
+            - { var:1227, quality:1.5490656738281250e+03,
+                le:1.0542486608028412e-01 }
       -
          depth: 1
          value: 3.
          norm_class_idx: 3
          splits:
-            - { var:282, quality:1.4251881103515625e+03,
-                le:2.3501588404178619e-01 }
+            - { var:935, quality:1.3039077148437500e+03,
+                le:1.7324099317193031e-02 }
+      -
+         depth: 2
+         value: 2.
+         norm_class_idx: 2
+         splits:
+            - { var:1564, quality:7.3329414367675781e+01,
+                le:4.5164279639720917e-02 }
+      -
+         depth: 3
+         value: 3.
+         norm_class_idx: 3
+      -
+         depth: 3
+         value: 2.
+         norm_class_idx: 2
       -
          depth: 2
          value: 3.
          norm_class_idx: 3
          splits:
-            - { var:602, quality:1.4520341796875000e+03,
-                le:2.1630071103572845e-02 }
-      -
-         depth: 3
-         value: 2.
-         norm_class_idx: 2
-         splits:
-            - { var:89, quality:1.0970526123046875e+02,
-                le:4.4104866683483124e-02 }
-      -
-         depth: 4
-         value: 3.
-         norm_class_idx: 3
-      -
-         depth: 4
-         value: 2.
-         norm_class_idx: 2
-         splits:
-            - { var:31, quality:95., le:9.4390109181404114e-02 }
-      -
-         depth: 5
-         value: 3.
-         norm_class_idx: 3
-      -
-         depth: 5
-         value: 2.
-         norm_class_idx: 2
+            - { var:282, quality:1.3182976074218750e+03,
+                le:2.5350072979927063e-01 }
       -
          depth: 3
          value: 3.
          norm_class_idx: 3
          splits:
-            - { var:491, quality:1.4151647949218750e+03,
-                le:1.9604870676994324e-01 }
+            - { var:1405, quality:1.3180335693359375e+03,
+                le:3.2254251837730408e-01 }
       -
          depth: 4
          value: 3.
          norm_class_idx: 3
          splits:
-            - { var:494, quality:1.3901590576171875e+03,
-                le:4.3622055649757385e-01 }
+            - { var:1729, quality:1.3199390869140625e+03,
+                le:3.0567404627799988e-01 }
       -
          depth: 5
          value: 3.
          norm_class_idx: 3
          splits:
-            - { var:659, quality:1.3919251708984375e+03,
-                le:5.6648747995495796e-03 }
+            - { var:659, quality:1.3096831054687500e+03,
+                le:6.5166587010025978e-03 }
       -
          depth: 6
          value: 2.
@@ -591,108 +581,87 @@ opencv_ml_dtree:
          value: 3.
          norm_class_idx: 3
          splits:
-            - { var:241, quality:1.3965067138671875e+03,
-                le:4.6281114220619202e-01 }
+            - { var:55, quality:1.3090860595703125e+03,
+                le:4.8208427429199219e-01 }
       -
          depth: 7
          value: 3.
          norm_class_idx: 3
          splits:
-            - { var:1399, quality:1.3971368408203125e+03,
-                le:2.2482054773718119e-03 }
-      -
-         depth: 8
-         value: 2.
-         norm_class_idx: 2
+            - { var:279, quality:1.3100529785156250e+03,
+                le:4.1208153963088989e-01 }
       -
          depth: 8
          value: 3.
          norm_class_idx: 3
          splits:
-            - { var:1368, quality:1.3985777587890625e+03,
-                le:4.2881739139556885e-01 }
+            - { var:318, quality:1.3110272216796875e+03,
+                le:3.5992848873138428e-01 }
       -
          depth: 9
          value: 3.
          norm_class_idx: 3
          splits:
-            - { var:723, quality:1.4000495605468750e+03,
-                le:3.3421587944030762e-01 }
+            - { var:240, quality:1.3120196533203125e+03,
+                le:4.9497002363204956e-01 }
       -
          depth: 10
          value: 3.
          norm_class_idx: 3
          splits:
-            - { var:378, quality:1.4010297851562500e+03,
-                le:4.6884611248970032e-01 }
+            - { var:611, quality:1.3130136718750000e+03,
+                le:5.0282925367355347e-01 }
       -
          depth: 11
          value: 3.
          norm_class_idx: 3
          splits:
-            - { var:36, quality:1.4020227050781250e+03,
-                le:1.1700255563482642e-03 }
+            - { var:1518, quality:1.3140061035156250e+03,
+                le:4.1881614923477173e-01 }
       -
          depth: 12
+         value: 3.
+         norm_class_idx: 3
+         splits:
+            - { var:443, quality:1.3140014648437500e+03,
+                le:2.6738608721643686e-03 }
+      -
+         depth: 13
+         value: 1.
+         norm_class_idx: 1
+      -
+         depth: 13
+         value: 3.
+         norm_class_idx: 3
+         splits:
+            - { var:782, quality:1.3136666259765625e+03,
+                le:3.6883354187011719e-03 }
+      -
+         depth: 14
+         value: 3.
+         norm_class_idx: 3
+      -
+         depth: 14
+         value: 3.
+         norm_class_idx: 3
+      -
+         depth: 12
+         value: 1.
+         norm_class_idx: 1
+      -
+         depth: 11
          value: 2.
          norm_class_idx: 2
-      -
-         depth: 12
-         value: 3.
-         norm_class_idx: 3
-         splits:
-            - { var:30, quality:1.4030128173828125e+03,
-                le:4.5786315202713013e-01 }
-      -
-         depth: 13
-         value: 3.
-         norm_class_idx: 3
-         splits:
-            - { var:279, quality:1.4040057373046875e+03,
-                le:5.0733840465545654e-01 }
-      -
-         depth: 14
-         value: 3.
-         norm_class_idx: 3
-         splits:
-            - { var:1642, quality:1.4050014648437500e+03,
-                le:6.2858117744326591e-03 }
-      -
-         depth: 15
-         value: 1.
-         norm_class_idx: 1
-      -
-         depth: 15
-         value: 3.
-         norm_class_idx: 3
-         splits:
-            - { var:885, quality:1405., le:3.9498734474182129e-01 }
-      -
-         depth: 16
-         value: 3.
-         norm_class_idx: 3
-      -
-         depth: 16
-         value: 1.
-         norm_class_idx: 1
-      -
-         depth: 14
-         value: 1.
-         norm_class_idx: 1
-      -
-         depth: 13
-         value: 1.
-         norm_class_idx: 1
-      -
-         depth: 11
-         value: 0.
-         norm_class_idx: 0
       -
          depth: 10
          value: 0.
          norm_class_idx: 0
       -
          depth: 9
+         value: 1.
+         norm_class_idx: 1
+      -
+         depth: 8
          value: 2.
          norm_class_idx: 2
       -
@@ -701,314 +670,113 @@ opencv_ml_dtree:
          norm_class_idx: 0
       -
          depth: 5
-         value: 1.
-         norm_class_idx: 1
+         value: 3.
+         norm_class_idx: 3
       -
          depth: 4
-         value: 3.
-         norm_class_idx: 3
-         splits:
-            - { var:786, quality:6.9839897155761719e+01,
-                le:1.0561754554510117e-01 }
-      -
-         depth: 5
-         value: 3.
-         norm_class_idx: 3
-         splits:
-            - { var:780, quality:6.4468750000000000e+01,
-                le:2.6284432411193848e-01 }
-      -
-         depth: 6
-         value: 3.
-         norm_class_idx: 3
-         splits:
-            - { var:27, quality:6.2666667938232422e+01,
-                le:2.7396896481513977e-01 }
-      -
-         depth: 7
-         value: 3.
-         norm_class_idx: 3
-      -
-         depth: 7
-         value: 1.
-         norm_class_idx: 1
-      -
-         depth: 6
          value: 2.
          norm_class_idx: 2
-      -
-         depth: 5
-         value: 1.
-         norm_class_idx: 1
-         splits:
-            - { var:664, quality:3.4729728698730469e+01,
-                le:2.8564669191837311e-02 }
-      -
-         depth: 6
-         value: 2.
-         norm_class_idx: 2
-      -
-         depth: 6
-         value: 1.
-         norm_class_idx: 1
-      -
-         depth: 2
-         value: 1.
-         norm_class_idx: 1
-         splits:
-            - { var:40, quality:1.0621533203125000e+02,
-                le:1.3639828562736511e-01 }
       -
          depth: 3
-         value: 1.
-         norm_class_idx: 1
+         value: 0.
+         norm_class_idx: 0
          splits:
-            - { var:575, quality:9.4501472473144531e+01,
-                le:1.0675972700119019e-01 }
+            - { var:497, quality:6.4519447326660156e+01,
+                le:6.2008179724216461e-02 }
       -
          depth: 4
          value: 0.
          norm_class_idx: 0
-         splits:
-            - { var:351, quality:6.3804595947265625e+01,
-                le:1.1820136010646820e-01 }
-      -
-         depth: 5
-         value: 2.
-         norm_class_idx: 2
-      -
-         depth: 5
-         value: 0.
-         norm_class_idx: 0
-         splits:
-            - { var:62, quality:58., le:1.5673735737800598e-01 }
-      -
-         depth: 6
-         value: 0.
-         norm_class_idx: 0
-      -
-         depth: 6
-         value: 2.
-         norm_class_idx: 2
-      -
-         depth: 4
-         value: 1.
-         norm_class_idx: 1
-         splits:
-            - { var:426, quality:6.7256919860839844e+01,
-                le:4.0586680173873901e-02 }
-      -
-         depth: 5
-         value: 2.
-         norm_class_idx: 2
-      -
-         depth: 5
-         value: 1.
-         norm_class_idx: 1
-         splits:
-            - { var:1029, quality:67., le:2.0726633071899414e-01 }
-      -
-         depth: 6
-         value: 1.
-         norm_class_idx: 1
-      -
-         depth: 6
-         value: 0.
-         norm_class_idx: 0
-      -
-         depth: 3
-         value: 3.
-         norm_class_idx: 3
-         splits:
-            - { var:598, quality:8.5768112182617188e+01,
-                le:4.6640157699584961e-02 }
-      -
-         depth: 4
-         value: 2.
-         norm_class_idx: 2
       -
          depth: 4
          value: 3.
          norm_class_idx: 3
-         splits:
-            - { var:1446, quality:6.1700000762939453e+01,
-                le:1.8511983752250671e-01 }
-      -
-         depth: 5
-         value: 3.
-         norm_class_idx: 3
-         splits:
-            - { var:12, quality:60., le:4.2152392864227295e-01 }
-      -
-         depth: 6
-         value: 3.
-         norm_class_idx: 3
-      -
-         depth: 6
-         value: 1.
-         norm_class_idx: 1
-      -
-         depth: 5
-         value: 1.
-         norm_class_idx: 1
       -
          depth: 1
          value: 1.
          norm_class_idx: 1
          splits:
-            - { var:1310, quality:3.7054003906250000e+02,
-                le:1.1353643238544464e-01 }
-      -
-         depth: 2
-         value: 0.
-         norm_class_idx: 0
-         splits:
-            - { var:1723, quality:1.6862651062011719e+02,
-                le:9.8202720284461975e-02 }
-      -
-         depth: 3
-         value: 0.
-         norm_class_idx: 0
-         splits:
-            - { var:832, quality:1.2173775482177734e+02,
-                le:8.9152209460735321e-02 }
-      -
-         depth: 4
-         value: 1.
-         norm_class_idx: 1
-      -
-         depth: 4
-         value: 0.
-         norm_class_idx: 0
-         splits:
-            - { var:391, quality:1.1946154022216797e+02,
-                le:2.3166340589523315e-01 }
-      -
-         depth: 5
-         value: 0.
-         norm_class_idx: 0
-      -
-         depth: 5
-         value: 1.
-         norm_class_idx: 1
-      -
-         depth: 3
-         value: 3.
-         norm_class_idx: 3
-         splits:
-            - { var:616, quality:1.4394163513183594e+02,
-                le:4.9240369349718094e-02 }
-      -
-         depth: 4
-         value: 2.
-         norm_class_idx: 2
-         splits:
-            - { var:1246, quality:6.4781745910644531e+01,
-                le:3.1265175342559814e-01 }
-      -
-         depth: 5
-         value: 2.
-         norm_class_idx: 2
-         splits:
-            - { var:40, quality:63., le:3.5187822580337524e-01 }
-      -
-         depth: 6
-         value: 2.
-         norm_class_idx: 2
-      -
-         depth: 6
-         value: 3.
-         norm_class_idx: 3
-      -
-         depth: 5
-         value: 1.
-         norm_class_idx: 1
-      -
-         depth: 4
-         value: 3.
-         norm_class_idx: 3
-         splits:
-            - { var:828, quality:1.0456896209716797e+02,
-                le:7.4624558910727501e-03 }
-      -
-         depth: 5
-         value: 2.
-         norm_class_idx: 2
-      -
-         depth: 5
-         value: 3.
-         norm_class_idx: 3
-         splits:
-            - { var:525, quality:1.0641666412353516e+02,
-                le:2.4062307178974152e-01 }
-      -
-         depth: 6
-         value: 3.
-         norm_class_idx: 3
-         splits:
-            - { var:367, quality:108., le:2.1065628528594971e-01 }
-      -
-         depth: 7
-         value: 3.
-         norm_class_idx: 3
-      -
-         depth: 7
-         value: 1.
-         norm_class_idx: 1
-      -
-         depth: 6
-         value: 0.
-         norm_class_idx: 0
+            - { var:1435, quality:4.4684768676757812e+02,
+                le:3.0732753872871399e-01 }
       -
          depth: 2
          value: 1.
          norm_class_idx: 1
          splits:
-            - { var:1196, quality:3.2788595581054688e+02,
-                le:1.0942132771015167e-01 }
+            - { var:652, quality:4.1329269409179688e+02,
+                le:2.2518541663885117e-02 }
       -
          depth: 3
-         value: 0.
-         norm_class_idx: 0
+         value: 2.
+         norm_class_idx: 2
          splits:
-            - { var:1067, quality:1.1656461334228516e+02,
-                le:1.7502382397651672e-01 }
+            - { var:633, quality:1.3997253417968750e+02,
+                le:6.8579502403736115e-02 }
       -
          depth: 4
-         value: 1.
-         norm_class_idx: 1
+         value: 2.
+         norm_class_idx: 2
          splits:
-            - { var:910, quality:8.4427185058593750e+01,
-                le:1.9084112718701363e-02 }
+            - { var:63, quality:140., le:5.2652865648269653e-02 }
+      -
+         depth: 5
+         value: 0.
+         norm_class_idx: 0
       -
          depth: 5
          value: 2.
          norm_class_idx: 2
       -
+         depth: 4
+         value: 1.
+         norm_class_idx: 1
+      -
+         depth: 3
+         value: 1.
+         norm_class_idx: 1
+         splits:
+            - { var:778, quality:3.8097695922851562e+02,
+                le:1.8465657532215118e-01 }
+      -
+         depth: 4
+         value: 1.
+         norm_class_idx: 1
+         splits:
+            - { var:788, quality:2.6799325561523438e+02,
+                le:5.7313404977321625e-02 }
+      -
+         depth: 5
+         value: 3.
+         norm_class_idx: 3
+      -
          depth: 5
          value: 1.
          norm_class_idx: 1
          splits:
-            - { var:1471, quality:7.4225578308105469e+01,
-                le:2.9439711570739746e-01 }
+            - { var:801, quality:2.6899792480468750e+02,
+                le:3.0824352055788040e-02 }
+      -
+         depth: 6
+         value: 2.
+         norm_class_idx: 2
       -
          depth: 6
          value: 1.
          norm_class_idx: 1
          splits:
-            - { var:1346, quality:7.9401710510253906e+01,
-                le:5.1291704177856445e-02 }
+            - { var:534, quality:2.8035223388671875e+02,
+                le:3.7436239421367645e-02 }
       -
          depth: 7
-         value: 0.
-         norm_class_idx: 0
+         value: 3.
+         norm_class_idx: 3
       -
          depth: 7
          value: 1.
          norm_class_idx: 1
          splits:
-            - { var:176, quality:7.6666664123535156e+01,
-                le:3.4589193761348724e-02 }
+            - { var:1188, quality:2.7919650268554688e+02,
+                le:2.1326880902051926e-02 }
       -
          depth: 8
          value: 0.
@@ -1017,8 +785,25 @@ opencv_ml_dtree:
          depth: 8
          value: 1.
          norm_class_idx: 1
+         splits:
+            - { var:1716, quality:2.8102847290039062e+02,
+                le:4.4117905199527740e-03 }
       -
-         depth: 6
+         depth: 9
+         value: 0.
+         norm_class_idx: 0
+      -
+         depth: 9
+         value: 1.
+         norm_class_idx: 1
+         splits:
+            - { var:598, quality:281., le:3.3750137686729431e-01 }
+      -
+         depth: 10
+         value: 1.
+         norm_class_idx: 1
+      -
+         depth: 10
          value: 3.
          norm_class_idx: 3
       -
@@ -1026,71 +811,82 @@ opencv_ml_dtree:
          value: 0.
          norm_class_idx: 0
          splits:
-            - { var:1387, quality:7.9732139587402344e+01,
-                le:9.5792442560195923e-02 }
-      -
-         depth: 5
-         value: 1.
-         norm_class_idx: 1
+            - { var:6, quality:2.2624537658691406e+02,
+                le:2.6631034910678864e-02 }
       -
          depth: 5
          value: 0.
          norm_class_idx: 0
          splits:
-            - { var:384, quality:8.2285713195800781e+01,
-                le:1.9140988588333130e-01 }
+            - { var:1409, quality:1.8679335021972656e+02,
+                le:2.1295364201068878e-01 }
       -
          depth: 6
+         value: 0.
+         norm_class_idx: 0
+         splits:
+            - { var:1167, quality:1.8133332824707031e+02,
+                le:4.0119595825672150e-02 }
+      -
+         depth: 7
+         value: 1.
+         norm_class_idx: 1
+      -
+         depth: 7
          value: 0.
          norm_class_idx: 0
       -
          depth: 6
          value: 1.
          norm_class_idx: 1
+      -
+         depth: 5
+         value: 1.
+         norm_class_idx: 1
+         splits:
+            - { var:455, quality:1.1140000152587891e+02,
+                le:8.6033061146736145e-02 }
+      -
+         depth: 6
+         value: 3.
+         norm_class_idx: 3
+      -
+         depth: 6
+         value: 1.
+         norm_class_idx: 1
+         splits:
+            - { var:1196, quality:9.7701690673828125e+01,
+                le:6.3255503773689270e-02 }
+      -
+         depth: 7
+         value: 0.
+         norm_class_idx: 0
+      -
+         depth: 7
+         value: 1.
+         norm_class_idx: 1
+      -
+         depth: 2
+         value: 3.
+         norm_class_idx: 3
+         splits:
+            - { var:421, quality:1.6621908569335938e+02,
+                le:1.8594650924205780e-01 }
       -
          depth: 3
-         value: 1.
-         norm_class_idx: 1
+         value: 3.
+         norm_class_idx: 3
          splits:
-            - { var:660, quality:2.6453091430664062e+02,
-                le:1.1176325380802155e-02 }
-      -
-         depth: 4
-         value: 2.
-         norm_class_idx: 2
+            - { var:913, quality:160., le:5.6943334639072418e-02 }
       -
          depth: 4
          value: 1.
          norm_class_idx: 1
-         splits:
-            - { var:1752, quality:2.6905203247070312e+02,
-                le:3.1933002173900604e-03 }
       -
-         depth: 5
-         value: 0.
-         norm_class_idx: 0
-      -
-         depth: 5
-         value: 1.
-         norm_class_idx: 1
-         splits:
-            - { var:10, quality:2.6700747680664062e+02,
-                le:3.4328296780586243e-01 }
-      -
-         depth: 6
-         value: 1.
-         norm_class_idx: 1
-         splits:
-            - { var:33, quality:267., le:4.1101700067520142e-01 }
-      -
-         depth: 7
-         value: 1.
-         norm_class_idx: 1
-      -
-         depth: 7
+         depth: 4
          value: 3.
          norm_class_idx: 3
       -
-         depth: 6
-         value: 0.
-         norm_class_idx: 0
+         depth: 3
+         value: 2.
+         norm_class_idx: 2

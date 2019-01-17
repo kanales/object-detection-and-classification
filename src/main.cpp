@@ -10,29 +10,34 @@
 #include "task2.h"
 #include "task3.h"
 
-int main(int argc, const char * argv[]) {
-    /*
-    for (int i = 0; i < 3; i++) {
-        part1(i);
-    }
+bool require_training() {
+    bool x;
+    std::cout << "Should the model be re-trained?" << std::endl;
+    std::cin >> x;
+    return x;
+}
 
-    float max = 0;
-    int maxi = 0;
-    for (int i = 10; i < 100; i += 5) {
-        float acc = part2(i);
-        std::cout << i << " > " << acc << std::endl;
-        if (acc > max) {
-            max = acc;
-            maxi = i;
+int get_index() {
+    int x;
+    std::cout << "Insert image index:" << std::endl;
+    std::cin >> x;
+    return x;
+}
+
+int main(int argc, const char * argv[]) {
+    //part1(0);
+    //part2(25);
+    // Select true to rebuild the forest, false otherwise
+    int part;
+    while (true) {
+        std::cout << "Insert part:" << std::endl;
+        std::cin >> part;
+        switch (part) {
+            case 1: part1(0);break;
+            case 2: part2(25);break;
+            case 31: test(require_training(),get_index());break;
+            case 32: part3(require_training(), 0, 0.75);break;
+            case -1: return 0;
         }
     }
-
-
-
-    std::cout << maxi << ": acc " << max << std::endl;
-     */
-    ///*
-    //part1(0);
-    part3(false, 0, 0.75);
-    //*/
 }

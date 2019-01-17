@@ -7,10 +7,13 @@
 #include "ObjectDetector.h"
 #include "DataLoader.h"
 
+#include <algorithm>
 #include <fstream>
 
 
 cv::String newPath( $ROOT "data/task3/train/0" );
+
+
 
 void load_gt(std::vector<std::vector<DetectedObject>>& gts) {
 
@@ -59,9 +62,9 @@ void load_gt(std::vector<std::vector<DetectedObject>>& gts) {
 std::tuple<int, int, int> evaluate(std::vector<std::vector<DetectedObject>>& gts, int index, std::vector<DetectedObject>::iterator begin,  std::vector<DetectedObject>::iterator end){
 
     float thr = 0.5; //can be changed
-    float correct = 0;
-    float falsepos = 0;
-    float falseneg = 0;
+    int correct = 0;
+    int falsepos = 0;
+    int falseneg = 0;
 
     for( auto it = begin ; it != end ; it++){
 
@@ -72,7 +75,7 @@ std::tuple<int, int, int> evaluate(std::vector<std::vector<DetectedObject>>& gts
           if( ((gt.rect & (*it).rect).area() / (float)(gt.rect | (*it).rect).area()) > thr) correct++;
           else falsepos++;
     }
-    falseneg += 3-std::min(3,falsepos+correct);
+    falseneg += 3 - std::min(3, correct);
     // not so sure
 
     return {correct,falsepos,falseneg};
@@ -129,6 +132,72 @@ void data_augmentation(cv::String train_path) {
 
 cv::Scalar class_color[] = {cv::Scalar(0,0,255), cv::Scalar(0,255,0), cv::Scalar(255,0,0)};
 
+void test(bool retrain, int imageIndex) {
+    // cv::String path( $ROOT "data/task3/train/0" );
+    cv::String path( $ROOT "data/task3/train/0" );
+    cv::String test_path( $ROOT "data/task3/test/0000.jpg" );
+    cv::String model_dir( $ROOT "model/" );
+
+    //std::cout << "Augmenting..." << std::endl;
+    //data_augmentation(path);
+
+    int n_classes = 4;
+    int ntrees  = 30; //20
+
+    int nsample = RandomForest::ALL_SAMPLES;
+
+    cv::HOGDescriptor hog = mk_hog();
+    RandomForest rf(ntrees, nsample, hog, n_classes, 50, 100, 0);
+
+    DataLoader dl;
+
+    if (retrain) {
+        std::cout << "Training forest..." << std::endl;
+        auto [feats, labels]  = dl.load(path,n_classes, hog); //rf.load_train(path);
+        rf.train(feats, labels);
+        rf.save(model_dir);
+        std::cout << "Done training." << std::endl;
+    } else {
+        std::cout << "Loading forest..." << std::endl;
+        rf.load(model_dir);
+    }
+
+    ObjectDetector od(rf, 3);
+    od.overlap_thr = 0.15;
+    od.bgCutoff = 0.75;
+
+    cv::Mat image = cv::imread(test_path, cv::IMREAD_COLOR);
+
+    std::vector<DetectedObject> objs = od.detectObjects(image, 1.3, 8);
+
+    for (auto el: objs) {
+        std::cout << el.confidence << ' ';
+    }
+
+    std::ostringstream stream;
+    for (DetectedObject v: objs) {
+        cv::rectangle(image, v.rect, class_color[v.cls]);
+        stream.str(std::string());
+        stream << "cls: " << v.cls << " conf:" << v.confidence;
+        cv::putText(image, stream.str(), cv::Point(v.rect.x, v.rect.y), cv::FONT_HERSHEY_PLAIN, 0.75, class_color[v.cls], 1);
+
+    }
+
+
+
+    std::cout << "Evaluating ..." << '\n';
+    std::vector<std::vector<DetectedObject>> gts (44);
+    load_gt(gts);
+
+    for (auto obj: gts[imageIndex]) {
+        //cv::rectangle(image, obj.rect, cv::Scalar(0,0,0));
+    }
+
+    cv::imshow("Image", image);
+    cv::waitKey();
+
+}
+
 // execute task 3
 void part3(bool retrain, float object_thr, float overlapthr) {
     // cv::String path( $ROOT "data/task3/train/0" );
@@ -169,8 +238,8 @@ void part3(bool retrain, float object_thr, float overlapthr) {
     float precision = 0;
     float recall = 0;
     std::ofstream myfile;
-    myfile.open ("data.dat");
-    myfile << "#Thr Recall Precision" << std::endl;
+    myfile.open ($ROOT  "data.dat");
+    myfile << "Thr Recall Precision" << std::endl;
     std::cout << "Evaluating ..." << '\n';
     ObjectDetector od(rf, 3);
     od.overlap_thr = overlapthr;
@@ -179,7 +248,10 @@ void part3(bool retrain, float object_thr, float overlapthr) {
     int totalfalsepos = 0;
     int totalfalseneg = 0;
     cv::String image_test_path("");
-    std::vector<float[3]> results(10);
+    float thr_step = 0.01;
+    size_t elements = (size_t) 1/thr_step;
+    std::vector<std::array<float, 3> > results(elements);
+
     for (int img = 0; img < 44; img++) {
       if (img<10) image_test_path = cv::String(datatest_path+"0"+std::to_string(img)+".jpg");
       else image_test_path = cv::String(datatest_path+std::to_string(img)+".jpg");
@@ -188,7 +260,7 @@ void part3(bool retrain, float object_thr, float overlapthr) {
 
       std::vector<DetectedObject> objs = od.detectObjects(image_test,1.3,8);
 
-      for (object_thr = 0 ; object_thr <= 1; object_thr+=0.1) {
+      for (object_thr = 0 ; object_thr <= 1; object_thr+=thr_step) {
         totalcorrects = 0;
         totalfalsepos = 0;
         totalfalseneg = 0;
@@ -201,7 +273,7 @@ void part3(bool retrain, float object_thr, float overlapthr) {
 
         auto [correct,falsepos,falseneg] = evaluate(gts, img, begin, end);
 
-        int thrindex = object_thr*10;
+        int thrindex = object_thr*elements;
         results[thrindex][0] += correct;
         results[thrindex][1] += falsepos;
         results[thrindex][2] += falseneg;
@@ -210,13 +282,11 @@ void part3(bool retrain, float object_thr, float overlapthr) {
         // totalfalseneg += falseneg;
       }
     }
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < elements; i++) {
       precision = (float)results[i][0]/(results[i][0]+results[i][1]);
       recall = (float)results[i][0]/(results[i][0]+results[i][2]);
-      std::cout << "Thr = " << (float)i/10 << '\n';
-      std::cout << "Precision = " << precision << '\n';
-      std::cout << "Recall = " << recall << '\n';
-      myfile << (float)i/10 << " " << recall << " " << precision << std::endl;
+      std::cout << (float)i/elements << " " << recall << " " << precision << std::endl;
+      myfile << (float)i/elements << " " << recall << " " << precision << std::endl;
     }
     myfile.close();
 

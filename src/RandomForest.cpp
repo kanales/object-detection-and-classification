@@ -46,7 +46,7 @@ void RandomForest::train(cv::Mat &train_features, cv::Mat &train_label) {
     std::vector<int> vec(n);
     for (size_t i = 0; i < this->numTrees; i++)
     {
-        std::cout << i+1 << '/' << this->numTrees << std::endl;
+        std::cout << i+1 << '/' << this->numTrees << '\r' << std::flush;
         // Sampling
         vec =  randomvec(0,train_features.rows, n);
         for (int j,k = 0; k < n; k++) {
